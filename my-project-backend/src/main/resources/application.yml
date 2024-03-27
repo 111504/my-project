@@ -26,7 +26,7 @@ spring:
       expire: 1
 
   datasource:
-    url: jdbc:mysql://localhost:3306/test?verifyServerCertificate=false&useSSL=false&requireSSL=false
+    url: jdbc:mysql://localhost:3306/test?verifyServerCertificate=false&useSSL=false&requireSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver

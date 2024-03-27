@@ -3,7 +3,7 @@
 </script>
 
 <template>
-<div style="width: 100vw; height: 100vh; overflow: hidden;display: flex">
+<div class="welcome-container" >
   <div style="flex: 1;background-color: #181818">
     <el-image style="width: 100%; height: 100%" :src="url"  fit="cover" />
   </div>
@@ -36,5 +36,12 @@
   width: 400px;
   z-index: 5;
   background-color: white;
+}
+
+.welcome-container{
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
 }
 </style>

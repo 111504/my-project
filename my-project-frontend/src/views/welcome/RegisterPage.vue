@@ -21,8 +21,8 @@ const validateUsername=(rule,value,callback)=>{
   if(value ===''){
     console.log("空")
      callback(new Error('請輸入用戶名稱'))
-  }else if(!/^[a-zA-Z0-9\u4e00-\u9fa5]+$/.test(value)){
-    callback(new Error('請輸入英文、數字、中文'))
+  }else if(!/^[a-zA-Z0-9]+$/.test(value)){
+    callback(new Error('請輸入英文、數字'))
   }else{
     callback()
   }
@@ -79,8 +79,8 @@ const  validateEmail=()=> {
 
 
     get(`/api/auth/ask-code?email=${form.email}&type=register`, () => {
-      console.log("Enter ask code")
-      coldTime.value = 60
+      console.log("此為求職專案，故冷卻時間設定為10秒，方便展示")
+      coldTime.value = 10
       ElMessage.success(`驗證碼已發送到:${form.email},請查看`)
       const handle = setInterval(
           () => {
@@ -91,6 +91,7 @@ const  validateEmail=()=> {
             }
           }, 1000)
     }, undefined, (message) => {
+      console.log("請求驗證碼結束",message)
       ElMessage.warning(message)
       coldTime.value = 0
     })

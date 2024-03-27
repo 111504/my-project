@@ -1,4 +1,4 @@
-package com.example.myprojectbackend.entity.vo.request;
+package com.example.myprojectbackend.vo.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;

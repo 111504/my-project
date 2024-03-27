@@ -1,10 +1,11 @@
 package com.example.myprojectbackend.config;
 
 import com.example.myprojectbackend.entity.RestBean;
-import com.example.myprojectbackend.entity.dao.Account;
-import com.example.myprojectbackend.entity.dao.UserToken;
-import com.example.myprojectbackend.entity.dao.interfaces.UserTokenRepository;
-import com.example.myprojectbackend.entity.vo.reponse.AuthorizeVO;
+import com.example.myprojectbackend.entity.AccountEntity;
+import com.example.myprojectbackend.entity.UserTokenEntity;
+import com.example.myprojectbackend.dao.AccountRepository;
+import com.example.myprojectbackend.dao.UserTokenRepository;
+import com.example.myprojectbackend.vo.reponse.AuthorizeVO;
 
 import com.example.myprojectbackend.filter.JwtAuthorizeFilter;
 import com.example.myprojectbackend.service.AccountService;
@@ -12,7 +13,7 @@ import com.example.myprojectbackend.utils.JwtUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.AccessDeniedException;
@@ -21,6 +22,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -42,21 +44,23 @@ public class SecurityConfiguration {
     @Resource
     AccountService service;
 
-    @Autowired
+    @Resource
     UserTokenRepository userTokenRepository;
 
+    @Resource
+    AccountRepository accountRepository;
 
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http)throws Exception{
         return http
-                .authorizeHttpRequests(conf->conf
+                .authorizeHttpRequests((authorizeHttpRequests) ->
+                                authorizeHttpRequests
                         //對於匹配 /api/auth/** 這個路徑模式的所有請求，都允許所有用戶（包括未經認證的用戶）訪問。
                         .requestMatchers("/api/auth/**").permitAll()
                                 //該api限定只能有身份為admin才能訪問
-                                .requestMatchers("/api/test/admin").hasRole("ADMIN")
-                                .requestMatchers("/api/test/hello").hasRole("USER")
-                                .requestMatchers("/api/test/all").hasAnyRole("USER","ADMIN","EDITER")
+                                .requestMatchers("/api/test/admin").hasRole("admin")
+                                .requestMatchers("/api/test/hello").hasRole("user")
                                 //對於那些沒有被前面的規則匹配到的請求，都需要用戶進行認證才能訪問
                         .anyRequest().authenticated()
                         //允許表單登入
@@ -123,8 +127,12 @@ public class SecurityConfiguration {
         System.out.println("onAuthenticationSuccess");
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
+
         System.out.println("----印出authentication-----------------------------------");
-        System.out.println(authentication.getAuthorities());
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            System.out.println("- " + authority.getAuthority());
+        }
+
         System.out.println(authentication.getPrincipal());
         System.out.println(authentication.getDetails());
         System.out.println(authentication.getCredentials());
@@ -136,36 +144,31 @@ public class SecurityConfiguration {
         System.out.println(user.getUsername());
         //account 儲存的是，透過使用者名稱向資料庫查詢後，回傳的資料庫內容
 
-        Account account=service.findAccountByNameOrEmail(user.getUsername());
+        AccountEntity accountEntity =accountRepository.findByUsernameOrEmail(user.getUsername());
 
 
         UUID tokenId=UUID.randomUUID();
-        String token=utils.createJwt(user,account.getUuid(),account.getUsername(),account.getRole(),tokenId);
+        String token=utils.createJwt(user, accountEntity.getUuid(), accountEntity.getUsername(), accountEntity.getRole(),tokenId);
 
-
-        AuthorizeVO vo=account.asViewObject(AuthorizeVO.class,v->{
-            v.setExpire(utils.expireTime());
-            v.setToken(token);
-            v.setUuid(account.getUuid());
-            v.setRole(account.getRole());
-
-        });
+        AuthorizeVO vo=new AuthorizeVO();
+        vo.setToken(token);
+        vo.setUuid(accountEntity.getUuid());
+        vo.setRole(accountEntity.getRole());
+        vo.setUsername(accountEntity.getUsername());
+        vo.setExpire(utils.expireTime());
+        vo.setTokenId(tokenId.toString());
 
         //先停止user已使用的token
-        if(userTokenRepository.lockToken(account.getUuid())>0){
+        if(userTokenRepository.lockToken(accountEntity.getUuid())>0){
             System.out.println("success lock token");
         }else{
             System.out.println("fail lock token");
-        };
+        }
 
         //儲存token進資料庫
-        userTokenRepository.save(new UserToken(account.getUuid(),tokenId,1,utils.expireTime()));
+        userTokenRepository.save(new UserTokenEntity(accountEntity.getUuid(),tokenId,1,utils.expireTime()));
 
-        //vo.setExpire(utils.expireTime());
 
-        // vo.setRole(account.getRole());
-        //vo.setToken(token);
-        //vo.setUsername(account.getUsername());
         response.getWriter().write(RestBean.success(vo).asJsonString());
     }
 

@@ -1,10 +1,12 @@
-package com.example.myprojectbackend.entity.vo.reponse;
+package com.example.myprojectbackend.vo.reponse;
 
 import lombok.Data;
+import lombok.Setter;
 
 import java.util.Date;
 
 @Data
+@Setter
 public class AuthorizeVO {
     //創建當前JWT使用者的uuid
     String uuid;

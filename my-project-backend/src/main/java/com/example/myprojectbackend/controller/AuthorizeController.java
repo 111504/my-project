@@ -1,15 +1,14 @@
 package com.example.myprojectbackend.controller;
 
-
 import com.example.myprojectbackend.entity.RestBean;
-import com.example.myprojectbackend.entity.vo.request.ConfirmResetVO;
-import com.example.myprojectbackend.entity.vo.request.EmailRegisterVO;
-import com.example.myprojectbackend.entity.vo.request.EmailResetVO;
+import com.example.myprojectbackend.dao.UserTokenRepository;
+import com.example.myprojectbackend.service.SysUserService;
+import com.example.myprojectbackend.vo.request.ConfirmResetVO;
+import com.example.myprojectbackend.vo.request.EmailRegisterVO;
+import com.example.myprojectbackend.vo.request.EmailResetVO;
 import com.example.myprojectbackend.service.AccountService;
 import jakarta.annotation.Resource;
-
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -17,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.function.Function;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 @Validated
@@ -25,28 +24,34 @@ import java.util.function.Supplier;
 @RequestMapping("api/auth")
 public class AuthorizeController {
 
-    @Autowired
+    @Resource
     AccountService accountService;
-    //產生驗整碼
+
+    @Autowired
+    UserTokenRepository userTokenRepository;
+
+@Resource
+    SysUserService sysUserService;
+
     @GetMapping("/ask-code")
     public RestBean<Void> askVerifyCode(@RequestParam @Email String email,
                                         @RequestParam @Pattern(regexp = "(register|reset)")
                                         String type, HttpServletRequest request){
-      return this.messageHandle(()->
-              accountService.registerEmailVerifyCode(type,email,request.getRemoteAddr()));
+        return this.messageHandle(()->
+                accountService.registerEmailVerifyCode(type,email,request.getRemoteAddr()));
 
-   }
-   //註冊
-   @PostMapping("/register")
+    }
+    //註冊
+    @PostMapping("/register")
     public RestBean<Void> register(@RequestBody @Valid EmailRegisterVO vo){
-     return this.messageHandle(()->accountService.registerEmailAccount(vo));
+        return this.messageHandle(()->accountService.registerEmailAccount(vo));
 
-   }
-   //驗證驗證碼
-   @PostMapping("/reset-confirm")
-   public RestBean<Void> resetConfirm(@RequestBody @Valid ConfirmResetVO vo){
-       return this.messageHandle(()->accountService.resetConfirm(vo));
-   }
+    }
+    //驗證驗證碼
+    @PostMapping("/reset-confirm")
+    public RestBean<Void> resetConfirm(@RequestBody @Valid ConfirmResetVO vo){
+        return this.messageHandle(()->accountService.resetConfirm(vo));
+    }
 
     //重置密碼
     @PostMapping("/reset-password")
@@ -55,20 +60,32 @@ public class AuthorizeController {
     }
 
 
-    @PostMapping("/test")
-    public String importTemplate(@RequestBody String input)
+    @GetMapping("/validateToken")
+    public String validateToken()
     {
-       return "test";
+
+
+        return RestBean.success("TOKEN_SUCCESS","Token authority success").asJsonString();
     }
 
 
 
-   private <T> RestBean<T> messageHandle(Supplier<String> action){
-       String message=action.get();
+    @GetMapping("/testUser")
+    public String testUser()
+    {
 
-       if(message==null)
-           return RestBean.success();
-       else
-           return RestBean.failure(400,message);
-   }
+
+        return sysUserService.getUserAuthorityInfo(2L);
+    }
+
+
+
+    private <T> RestBean<T> messageHandle(Supplier<String> action){
+        String message=action.get();
+
+        if(Objects.equals(message, "SUCCESS"))
+            return RestBean.success();
+        else
+            return RestBean.failure(400,message);
+    }
 }

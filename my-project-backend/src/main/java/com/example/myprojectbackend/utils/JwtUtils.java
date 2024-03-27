@@ -6,6 +6,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.myprojectbackend.dao.UserTokenRepository;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -35,6 +36,10 @@ public class JwtUtils {
     @Resource
     StringRedisTemplate template;
 
+
+    @Resource
+    UserTokenRepository userTokenRepository;
+
     public boolean invalidateJwt(String headerToken){
         String token=this.convertToken(headerToken);
         System.out.println("invalidateJwt token="+token);
@@ -44,6 +49,14 @@ public class JwtUtils {
         try{
             //解密
             DecodedJWT jwt=jwtVerifier.verify(token);
+            Map<String , Claim> claims=jwt.getClaims();
+            String tokenId = claims.get("jti").asString();
+            System.out.println("tokenId="+tokenId);
+            if(userTokenRepository.lockTokenByTokenId(tokenId)>0){
+                System.out.println("success lock token");
+            }else{
+                System.out.println("fail lock token");
+            }
 
             String id=jwt.getId();
             System.out.println("DecodedJWT jwt id="+jwt.getId());
@@ -53,6 +66,10 @@ public class JwtUtils {
               return  false;
         }
     }
+
+
+
+
 
     private boolean deleteToken(String uuid,Date time){
         System.out.println("deleteToken uuid= "+uuid+", result= "+this.isInvalidToken(uuid));

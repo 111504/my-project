@@ -23,7 +23,7 @@ public class MailQueueListner {
 
     @RabbitHandler
     public void sendMailMessage(Map<String,Object> data){
-        System.out.println("觸發?");
+        System.out.println("進入sendMailMessage");
         String email= (String) data.get("email");
         Integer code= (Integer) data.get("code");
 

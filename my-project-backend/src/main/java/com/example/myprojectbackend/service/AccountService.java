@@ -1,22 +1,23 @@
 package com.example.myprojectbackend.service;
+import com.example.myprojectbackend.vo.request.ConfirmResetVO;
+import com.example.myprojectbackend.vo.request.EmailRegisterVO;
+import com.example.myprojectbackend.vo.request.EmailResetVO;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.myprojectbackend.entity.dao.Account;
-import com.example.myprojectbackend.entity.vo.request.ConfirmResetVO;
-import com.example.myprojectbackend.entity.vo.request.EmailRegisterVO;
-import com.example.myprojectbackend.entity.vo.request.EmailResetVO;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.List;
 
-public interface AccountService extends IService<Account>, UserDetailsService {
+public interface AccountService extends UserDetailsService{
 
 
-
-    Account findAccountByNameOrEmail(String text);
     String registerEmailVerifyCode(String type,String email,String ip);
 
     String registerEmailAccount(EmailRegisterVO vo);
 
     String resetConfirm(ConfirmResetVO vo);
     String resetEmailAccountPassword(EmailResetVO vo);
+
+     List<GrantedAuthority> getUserAuthority(Long userId);
+
 }

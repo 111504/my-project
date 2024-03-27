@@ -40,7 +40,7 @@ const onValidate = (prop, isValid) => {
 const  validateEmail=()=> {
 
   coldTime.value = 60
-  get(`/api/auth/ask-code?emial=${form.email}&type=reset`, () => {
+  get(`/api/auth/ask-code?email=${form.email}&type=reset`, () => {
     ElMessage.success(`驗證碼已發送到:${form.email},請查看`)
     const handle = setInterval(
         () => {
@@ -49,7 +49,7 @@ const  validateEmail=()=> {
             clearInterval(handle)
           }
         }, 1000)
-  }, undefined, (message) => {
+  }, (message) => {
     ElMessage.warning(message)
     coldTime.value = 0
   })

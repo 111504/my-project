@@ -1,4 +1,4 @@
-package com.example.myprojectbackend.entity.dao;
+package com.example.myprojectbackend.entity;
 
 
 import jakarta.persistence.*;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserToken {
+public class UserTokenEntity {
 
 
     @Id
@@ -30,7 +30,7 @@ public class UserToken {
     @Column(name = "uuid", nullable = false, length = 255)
     private String uuid;
 
-    @Column(name = "tokenid", length = 255)
+    @Column(name = "token_id", length = 255)
     private String tokenId;
 
     @Column(name = "flag")
@@ -38,13 +38,13 @@ public class UserToken {
 
     @Column(name = "expire_time")
     private Date expireTime;
-    public UserToken(String uuid, UUID tokenId, int i) {
+    public UserTokenEntity(String uuid, UUID tokenId, int i) {
         this.uuid = uuid;
         this.tokenId = tokenId.toString();
         this.flag = i == 1;
     }
 
-    public UserToken(String uuid, UUID tokenId, int i, Date date) {
+    public UserTokenEntity(String uuid, UUID tokenId, int i, Date date) {
         this.uuid = uuid;
         this.tokenId = tokenId.toString();
         this.flag = i == 1;

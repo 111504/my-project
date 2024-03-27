@@ -22,7 +22,7 @@ public class CorsFilter extends HttpFilter {
     protected void doFilter(HttpServletRequest request,
                             HttpServletResponse response,
                             FilterChain chain)throws IOException, ServletException {
-
+        System.out.println("進入在CROS之後");
         this.addCorsHeader(request,response);
 
         chain.doFilter(request,response);
@@ -31,7 +31,7 @@ public class CorsFilter extends HttpFilter {
     private  void addCorsHeader(HttpServletRequest request,HttpServletResponse response){
         response.addHeader("Access-Control-Allow-Origin",request.getHeader("Origin"));
         response.addHeader("Access-Control-Allow-Methods","GET,HEAD,POST,PUT,DELETE,OPTIONS,PATCH");
-        response.addHeader("Access-Control-Allow-Headers","Authorization,Content-Type");
+        response.addHeader("Access-Control-Allow-Headers","Authorization,Content-Type,JwtTokenId");
         Cookie uiColorCookie = new Cookie("color", "red");
         response.addCookie(uiColorCookie);
     }
