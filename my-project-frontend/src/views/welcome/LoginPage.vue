@@ -1,7 +1,7 @@
 <script setup>
 import {reactive,ref} from "vue";
 import {User,Lock} from '@element-plus/icons-vue'
-import  {login} from "@/net";
+import {login, requestUsersInformation} from "@/net";
 import router from "@/router/index.js";
 
 const formRef=ref()
@@ -25,27 +25,19 @@ function userLogin(){
     formRef.value.validate((valid)=>{
       if(valid){
         if(typeof form.username != "undefined" && typeof form.password !="undefined"){
-          console.log("Enter Func() userLogin "+form.username+" "+form.password)
+       //   console.log("Enter Func() userLogin "+form.username+" "+form.password)
           login(form.username,form.password,form.remember,
               (data) => {
-                  console.log("Func() userLogin ",data.role)
+
+                //  console.log("Func() userLogin ",data.role)
                 // 假设登录成功后，login函数的回调会接收到一个包含用户角色的data对象
-                router.push('/index');
-                // 根据用户角色跳转到不同的页面
-                // switch (data.role) {
-                //   case 'admin':
-                //     router.push('/admin');
-                //     break;
-                //   case 'user':
-                //     router.push('/user');
-                //     break;
-                //   default:
-                //     // 如果角色既不是admin也不是user，跳转到默认页面
-                //     router.push('/index');
-                //     break;
-                // }
+                console.log("Loginsuccess 開始請求側邊欄數據")
+                requestUsersInformation('/api/auth/requestUserInformation',form.remember);
+
+
               }
           )
+         // requestUsersInformation();
         }
         else{
           console.log("Enter Func() userLogin form.username or form.password have undefined value")
@@ -113,9 +105,7 @@ function userLogin(){
     <div>
       <el-button @click="router.push('/register')"   style="width: 270px" type="warning" plain>註冊</el-button>
     </div>
-    <div style="margin-top: 40px; margin-bottom:10px">
-      <el-button @click="" style="width: 270px"  plain>測試提取資料</el-button>
-    </div>
+
   </div>
 </div>
 </template>

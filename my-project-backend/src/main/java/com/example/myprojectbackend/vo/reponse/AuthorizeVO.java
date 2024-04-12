@@ -13,7 +13,10 @@ public class AuthorizeVO {
     //JWT的不重複ID
     String tokenId;
     String username;
+    String email;
     String role;
     String token;
     Date expire;
+    String phoneNumber;
+    String authorization;
 }

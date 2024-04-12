@@ -1,8 +1,11 @@
 package com.example.myprojectbackend.filter;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.myprojectbackend.dao.SysUserRepository;
 import com.example.myprojectbackend.dao.UserTokenRepository;
 import com.example.myprojectbackend.service.AccountService;
+import com.example.myprojectbackend.service.SysMenuService;
+import com.example.myprojectbackend.service.SysUserService;
 import com.example.myprojectbackend.utils.Const;
 import com.example.myprojectbackend.utils.JwtUtils;
 import jakarta.annotation.Resource;
@@ -31,7 +34,12 @@ public class JwtAuthorizeFilter extends OncePerRequestFilter {
     UserTokenRepository userTokenRepository;
 
     @Resource
-    AccountService accountService;
+    SysUserService sysUserService;
+
+    @Resource
+    SysUserRepository sysUserRepository;
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -62,13 +70,16 @@ public class JwtAuthorizeFilter extends OncePerRequestFilter {
 
                 //根據jwt儲存的訊息 創立User物件後填入用戶訊息
                 UserDetails user=utils.toUser(jwt);
-                System.out.println("user="+user);
-                System.out.println("user Authorities="+user.getAuthorities());
-//                UsernamePasswordAuthenticationToken authentication=
-//                        new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
+                user.getUsername();
+                Long userId= sysUserRepository.finduUserIdByUsername( user.getUsername());
+
+       //         System.out.println("user="+user);
+       //         System.out.println("user Authorities="+user.getAuthorities());
+       //   UsernamePasswordAuthenticationToken authentication=
+       //        new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
 
                 UsernamePasswordAuthenticationToken authentication=
-                        new UsernamePasswordAuthenticationToken(user,null,accountService.getUserAuthority(2L));
+                        new UsernamePasswordAuthenticationToken(user,null,sysUserService.getUserAuthority(userId));
 
                 //这一步骤是用来存储与认证请求相关的额外细节信息的。这通常包括请求的IP地址和Session ID等信息，这些信息可以在认证过程中或之后的安全审计中使用。
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

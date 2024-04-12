@@ -129,7 +129,7 @@ const rule = {
           <el-form-item prop="code" >
             <el-row :gutter="10" style="width: 100%">
               <el-col :span="17">
-                <el-input v-model="form.code"  maxlength="6" type="text" placeholder="請輸入驗證碼">
+                <el-input v-model="form.code"  maxlength="8" type="text" placeholder="請輸入驗證碼">
                   <template #prefix>
                     <el-icon><EditPen/></el-icon>
                   </template>

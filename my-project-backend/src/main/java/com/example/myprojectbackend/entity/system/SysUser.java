@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @TableName(value ="sys_user")
 @Data
@@ -54,5 +55,34 @@ public class SysUser extends BaseEntity implements Serializable {
     @TableField(value = "status")
     private String status;
 
+    /**
+     * 所属角色 多个角色 逗号隔开
+     */
+    @TableField(exist = false)
+    private String roles;
+
+    /**
+     * 旧密码
+     */
+    @TableField(exist = false)
+    private String oldPassword;
+
+    /**
+     * 确认新密码
+     */
+    @TableField(exist = false)
+    private String newPassword;
+
+    /**
+     * 所有角色集合
+     */
+    @TableField(exist = false)
+    public List<SysRole> sysRoleList;
+
+    /**
+     * 用戶的 uuid
+     */
+    @TableField(exist = false)
+    public String uuid;
 
 }

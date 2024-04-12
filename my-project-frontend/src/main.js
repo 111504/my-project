@@ -1,5 +1,4 @@
 import './assets/main.css'
-import {useMenuStore} from "@/store/Store.js";
 import { createApp } from 'vue'
 import App from './App.vue'
 import { createPinia } from 'pinia'
@@ -8,20 +7,34 @@ import 'element-plus/dist/index.css'
 import ElementPlus  from 'element-plus';
 import axios from "axios";
 import 'element-plus/theme-chalk/dark/css-vars.css'
-axios.defaults.baseURL="http://localhost:8080"
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import SvgIcon from "./components/SvgIcon.vue"
+import 'virtual:svg-icons-register'
+import "./router/permission.js"
+// 国际化中文
 
+import {zhTw} from "element-plus/es/locale/index";
+
+
+
+axios.defaults.baseURL="http://localhost:8080"
 const pinia = createPinia()
 const app = createApp(App)
 app.use(pinia)
-app.use(ElementPlus)
-app.use(router)
+app.use(ElementPlus,{
+    locale:zhTw,
+})
 
-console.log("enter pinia")
+
+
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)
 }
 
-
+app.component("svg-icon",SvgIcon)
+console.log("app.use(router)----")
+console.log("在main裡的路由",router.getRoutes())
+app.use(router)
+console.log("app.use(router) finish----")
 app.mount('#app')

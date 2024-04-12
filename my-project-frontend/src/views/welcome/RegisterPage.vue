@@ -63,7 +63,8 @@ const  register= ()=>{
         username:form.username,
         password:form.password,
         email:form.email,
-        code:form.code
+        code:form.code,
+        phonenumber:form.phonenumber,
       },()=>{
         ElMessage.success('註冊成功')
         router.push('/')
@@ -119,7 +120,8 @@ const rule={
   ],
   code:[
     {required:true,message:'請輸入驗證碼',trigger:['blur']}
-  ]
+  ],
+  phonenumber: [{ required: true, message: "手機號碼不能為空", trigger: "blur" }, { pattern: /^09\d{8}$/, message: "請輸入正確的手機號碼", trigger: "blur" }],
 }
 
 
@@ -163,6 +165,12 @@ const rule={
             <el-icon><Message></Message></el-icon>
           </template>
         </el-input>
+      </el-form-item>
+      <el-form-item prop="phonenumber">
+        <el-input v-model="form.phonenumber" placeholder="電話號碼"/>
+        <template #prefix>
+          <el-icon><Message></Message></el-icon>
+        </template>
       </el-form-item>
       <el-form-item  prop="code">
         <el-row :gutter="10" style="width: 100%">

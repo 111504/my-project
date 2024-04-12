@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @TableName(value ="sys_menu")
 @Data
@@ -57,5 +59,8 @@ public class SysMenu extends BaseEntity implements Serializable {
      */
     @TableField(value = "perms")
     private String perms;
+
+    @TableField(exist = false)
+    private List<SysMenu> children=new ArrayList<>();
 
 }

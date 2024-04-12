@@ -1,9 +1,13 @@
 package com.example.myprojectbackend.service.impl;
 
 
+import com.example.myprojectbackend.dao.SysUserRepository;
 import com.example.myprojectbackend.entity.AccountEntity;
 import com.example.myprojectbackend.dao.AccountRepository;
+import com.example.myprojectbackend.entity.system.SysUserEntity;
+import com.example.myprojectbackend.service.SysMenuService;
 import com.example.myprojectbackend.service.SysUserService;
+import com.example.myprojectbackend.utils.StringUtil;
 import com.example.myprojectbackend.vo.request.ConfirmResetVO;
 import com.example.myprojectbackend.vo.request.EmailRegisterVO;
 import com.example.myprojectbackend.vo.request.EmailResetVO;
@@ -46,48 +50,39 @@ public class AccountServiceImpl implements AccountService {
     @Resource
     SysUserService sysUserService;
 
-
+    @Resource
+    SysMenuService sysMenuService;
    private final AccountRepository accountRepository;
+   private final SysUserRepository sysUserRepository;
 
-   public AccountServiceImpl(AccountRepository accountRepository){
+   public AccountServiceImpl(AccountRepository accountRepository,SysUserRepository sysUserRepository){
        this.accountRepository = accountRepository;
+       this.sysUserRepository = sysUserRepository;
    }
+
 
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("開始驗證使用者身分");
-        Optional<Integer> result=accountRepository.checkAccountEnabled(username);
-        if (result.isEmpty() || result.get() == 0) {
+//        Optional<Integer> result=accountRepository.checkAccountEnabled(username);
+          Optional<Integer> result=sysUserRepository.checkAccountEnabled(username);
+
+        //帳號1為禁用  帳號0為啟用
+        if (result.isEmpty() || result.get() == 1) {
             // 如果找不到结果，或账户被禁用，直接抛出异常
             throw new UsernameNotFoundException("用戶名錯誤或帳戶已經被禁用");
         }
-
-        AccountEntity accountEntity = accountRepository.findAccountByNameOrEmail(username);
-        if(accountEntity == null)
+        SysUserEntity sysUserEntity= sysUserRepository.findAccountByNameOrEmail(username);
+//        AccountEntity accountEntity = accountRepository.findAccountByNameOrEmail(username);
+        if(sysUserEntity == null)
             throw new UsernameNotFoundException("用戶名或密碼錯誤");
 
-        String rolesStr[]= accountEntity.getRole().split(",");
-        System.out.println("Roles: " + rolesStr);
+        return new User(sysUserEntity.getUsername(),sysUserEntity.getPassword(),sysUserService.getUserAuthority(sysUserEntity.getId()));
 
-
-        return new User(accountEntity.getUsername(),accountEntity.getPassword(),getUserAuthority(2L));
-
-//        return User
-//                .withUsername(username)
-//                .password(accountEntity.getPassword())
-//                //從資料庫查詢到的使用者角色，填入User後回傳(authorities)
-//                .roles(rolesStr)
-//                .build();
     }
 
-    @Override
-    public List<GrantedAuthority> getUserAuthority(Long userId) {
-        //  格式ROLE_admin,ROLE_common,system:user:resetPwd,system:role:delete,system:user:list,system:menu:query,system:menu:list,system:menu:add,system:user:delete,system:role:list,system:role:menu,system:user:edit,system:user:query,system:role:edit,system:user:add,system:user:role,system:menu:delete,system:role:add,system:role:query,system:menu:edit
-        String authority=sysUserService.getUserAuthorityInfo(userId);
-        //AuthorityUtils.commaSeparatedStringToAuthorityList 是 Spring Security 提供的一个工具方法，用于将逗号分隔的权限字符串转换成一个 List<GrantedAuthority>
-        return AuthorityUtils.commaSeparatedStringToAuthorityList(authority);
-    }
+
 
     @Override
     public String registerEmailVerifyCode(String type, String email, String ip) {
@@ -119,63 +114,79 @@ public class AccountServiceImpl implements AccountService {
         String email = vo.getEmail();
         System.out.println("email="+email);
         String username = vo.getUsername();
+        String phonenumber=vo.getPhonenumber();
         String key=Const.VERIFY_EMAIL_DATA+email;
         String code=stringRedisTemplate.opsForValue().get(key);
         System.out.println("註冊碼="+code);
         //產生員工uuid值
-        UUID uuid = UUID.randomUUID();
-        String userUuid=uuid.toString();
+        //UUID uuid = UUID.randomUUID();
+
+        //String userUuid=uuid.toString();
 
         if(code==null) return "請先取得驗證碼";
 
         if(!code.equals(vo.getCode())) return "驗證碼輸入錯誤，請重新輸入";
-
-        if(accountRepository.findByUsername(username)!=null) {
-            return "此用戶名已被使用";
-        }
-
-        Optional<Integer> enabledOpt= accountRepository.checkAccountEnabled(email);
-
-        if (enabledOpt.isPresent()) {
-            Integer isEnabled = enabledOpt.get();
-            if (isEnabled==1) {
-                return "該信箱 " + email + " 已使用中.請更換";
-            } else {
-                System.out.println("該信箱停用中 " + email + " 開始啟用.");
-                String password=passwordEncoder.encode(vo.getPassword());
-                ZonedDateTime nowInZone = ZonedDateTime.now();
-                if(accountRepository.enableAccount(username,password,"user", nowInZone.toLocalDateTime(),userUuid,true,email)>0){
-                    System.out.println("帳號啟用成功");
-                    return "SUCCESS";
-                }
-                else{
-                    return "帳號啟用失敗";
-                }
-
-            }
-        } else {
+        /*
+        * 1.使用者名稱已經被使用
+        * 2.使用者信箱已經被使用
+        *
+        * */
+        if(sysUserRepository.findByUsernameExist(username)!=null||sysUserRepository.findByUsernameExist(email)!=null) {
+            return "錯誤，此用戶名或信箱已被使用";
+        }else{
             System.out.println("開始創建帳號 ");
             String password=passwordEncoder.encode(vo.getPassword());
             ZonedDateTime nowInZone = ZonedDateTime.now();
-            AccountEntity accountEntity =new AccountEntity(username,password,email,"user",nowInZone.toLocalDateTime(),userUuid,true);
+            SysUserEntity sysUserEntity =new SysUserEntity(username,password,email,phonenumber,nowInZone.toLocalDateTime(),"創立帳號",StringUtil.genurateUserId());
+            sysUserRepository.save(sysUserEntity);
+            return "SUCCESS";
 
 
-            try {
-                accountRepository.save(accountEntity);
-                return "SUCCESS";
-
-            } catch (DataIntegrityViolationException e) {
-                // 处理违反数据完整性的情况，比如重复的键等
-              //  e.printStackTrace();
-                // 返回null或者自定义错误对象
-                return "DataIntegrityViolation Exception";
-            } catch (Exception e) {
-                // 捕获其他所有异常
-               // e.printStackTrace();
-                // 返回null或者自定义错误对象
-                return "RegisterEmailAccount Exception";
-            }
+            //            AccountEntity accountEntity =new AccountEntity(username,password,email,"user",nowInZone.toLocalDateTime()
         }
+
+
+
+//        if (enabledOpt.isPresent()) {
+//            Integer isEnabled = enabledOpt.get();
+//            if (isEnabled==1) {
+//                return "該信箱 " + email + " 已使用中.請更換";
+//            } else {
+//                System.out.println("該信箱停用中 " + email + " 開始啟用.");
+//                String password=passwordEncoder.encode(vo.getPassword());
+//                ZonedDateTime nowInZone = ZonedDateTime.now();
+//                if(accountRepository.enableAccount(username,password,"user", nowInZone.toLocalDateTime(),userUuid,true,email)>0){
+//                    System.out.println("帳號啟用成功");
+//                    return "SUCCESS";
+//                }
+//                else{
+//                    return "帳號啟用失敗";
+//                }
+//
+//            }
+//        } else {
+//            System.out.println("開始創建帳號 ");
+//            String password=passwordEncoder.encode(vo.getPassword());
+//            ZonedDateTime nowInZone = ZonedDateTime.now();
+//            AccountEntity accountEntity =new AccountEntity(username,password,email,"user",nowInZone.toLocalDateTime(),userUuid,true);
+//
+//
+//            try {
+//                accountRepository.save(accountEntity);
+//                return "SUCCESS";
+//
+//            } catch (DataIntegrityViolationException e) {
+//                // 处理违反数据完整性的情况，比如重复的键等
+//              //  e.printStackTrace();
+//                // 返回null或者自定义错误对象
+//                return "DataIntegrityViolation Exception";
+//            } catch (Exception e) {
+//                // 捕获其他所有异常
+//               // e.printStackTrace();
+//                // 返回null或者自定义错误对象
+//                return "RegisterEmailAccount Exception";
+//            }
+//        }
 
     }
     private int generatorVerifyCode(int min,int max){
@@ -188,6 +199,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public String resetConfirm(ConfirmResetVO vo) {
+       System.out.println("resetConfirm"+vo.getCode());
         String email=vo.getEmail();
         String code=stringRedisTemplate.opsForValue().get(Const.VERIFY_EMAIL_DATA+email);
         if(code==null) return "請先獲取驗整碼";
@@ -196,13 +208,18 @@ public class AccountServiceImpl implements AccountService {
         return "SUCCESS";
     }
 
+    //重置密碼
+
     @Override
     public String resetEmailAccountPassword(EmailResetVO vo) {
+        System.out.println("resetEmailAccountPassword"+vo.getCode());
         String email=vo.getEmail();
+        System.out.println("resetEmailAccountPassword email="+email);
         String verify=this.resetConfirm(new ConfirmResetVO(email, vo.getCode()));
         if(!Objects.equals(verify, "SUCCESS")) return verify;
         String password=passwordEncoder.encode(vo.getPassword());
-        if(accountRepository.updatePasswordByEmail( password,email)>0){
+
+        if(sysUserRepository.updatePasswordByEmail( password,email)>0){
             stringRedisTemplate.delete(Const.VERIFY_EMAIL_DATA+email);
             return "SUCCESS";
         }else{

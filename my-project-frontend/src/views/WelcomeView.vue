@@ -8,9 +8,9 @@
     <el-image style="width: 100%; height: 100%" :src="url"  fit="cover" />
   </div>
   <div class="welcome-title">
-    <div style="font-size: 30px;font-weight: bold">lorem ndfvn mvkmfvmlsdmfvadfmv</div>
-    <div style="margin-top: 10px">lorem ndfvn mvkmfvmlsdmfvadfmv</div>
-    <div style="margin-top: 5px">lorem ndfvn mvkmfvmlsdmfvadfmv</div>
+    <div style="font-size: 30px;font-weight: bold">權限系統專題實作</div>
+    <div style="margin-top: 10px">歡迎來到權限系統實作</div>
+    <div style="margin-top: 5px">此系統製作者為Hung che wei</div>
   </div>
   <div class="right-card">
      <router-view v-slot="{Component}">

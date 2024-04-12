@@ -10,7 +10,6 @@ function userLogout(){
   logout(()=>router.push('/'))
 }
 
-console.log("layout index");
 
 </script>
 
@@ -22,7 +21,10 @@ console.log("layout index");
       </el-aside>
       <el-container>
         <el-header class="common-header"><Header></Header></el-header>
-        <router-view/>
+        <el-main class="common-main">
+<!--          <Tabs/>-->
+          <router-view/>
+        </el-main>
 <!--        <el-main  class="common-main"><Tabs></Tabs></el-main>-->
         <el-footer><Footer></Footer></el-footer>
       </el-container>
@@ -62,4 +64,13 @@ console.log("layout index");
 .common-main:hover {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
+
+.common-main {
+  background: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out;
+  padding: 0px 0px 20px;
+}
+
+
 </style>

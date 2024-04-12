@@ -1,10 +1,10 @@
 <script setup>
 import {onMounted} from "vue";
-import {checkTokenEnable} from "@/net"
+import {checkTokenEnable, requestUsersInformation} from "@/net"
 onMounted(() => {
   // 頁面載入或刷新時 向後端發送檢查token是否合法
-  console.log("App onMounted")
   checkTokenEnable();
+ // requestUsersInformation('/api/auth/requestUserInformation');
 });
 </script>
 

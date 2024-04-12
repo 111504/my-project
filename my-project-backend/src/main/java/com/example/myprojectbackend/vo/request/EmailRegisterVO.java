@@ -17,6 +17,8 @@ public class EmailRegisterVO {
     String username;
     @Length(min=6,max=20)
     String password;
+    @Length(min=0,max=15)
+    String phonenumber;
 
 
 }

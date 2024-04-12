@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 public interface UserTokenRepository extends JpaRepository<UserTokenEntity,Integer> {
     @Modifying
@@ -24,6 +26,10 @@ public interface UserTokenRepository extends JpaRepository<UserTokenEntity,Integ
 
     @Query(value = "select flag from db_token where token_id=?1", nativeQuery = true)
     boolean checkTokenFlag(String tokenId);
+
+    @Query(value = "select uuid from db_token where uuid=?1 limit 2", nativeQuery = true)
+    List<String> checkUserExist(String uuid);
+
 
 
 }

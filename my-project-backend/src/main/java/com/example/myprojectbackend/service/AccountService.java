@@ -18,6 +18,6 @@ public interface AccountService extends UserDetailsService{
     String resetConfirm(ConfirmResetVO vo);
     String resetEmailAccountPassword(EmailResetVO vo);
 
-     List<GrantedAuthority> getUserAuthority(Long userId);
+
 
 }

@@ -10,8 +10,10 @@ const parentName = ref("")
 
 const initBreadCrumbList = ()=>{
   breadCrumbList.value = route.matched;
-  console.log(route.matched)
-  parentName.value = route.meta.parentName
+ // console.log(route.matched)
+  console.log(breadCrumbList.value)
+  console.log("route.meta)",route.meta)
+  parentName.value = route.meta.parentName;
 }
 //監聽router 當router發生變化時觸發
 watch(route,()=>{
@@ -24,8 +26,9 @@ watch(route,()=>{
 <template>
   <el-icon><HomeFilled/></el-icon>&nbsp;&nbsp;
   <el-breadcrumb separator="/">
+
     <el-breadcrumb-item v-for="(item,index) in breadCrumbList" :key="index">
-      <span class="root" v-if="parentName && index>0">{{parentName}}&nbsp;/&nbsp;</span>
+      <span class="root" v-if="parentName && index>0">{{parentName}}&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;</span>
       <span>{{item.name}}</span>
     </el-breadcrumb-item>
   </el-breadcrumb>

@@ -1013,8 +1013,8 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <schema id="294" parent="1" name="test">
-      <IntrospectionTimestamp>2024-03-25.03:48:49</IntrospectionTimestamp>
-      <LocalIntrospectionTimestamp>2024-03-24.11:48:49</LocalIntrospectionTimestamp>
+      <IntrospectionTimestamp>2024-04-13.04:43:59</IntrospectionTimestamp>
+      <LocalIntrospectionTimestamp>2024-04-12.12:43:59</LocalIntrospectionTimestamp>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </schema>
     <user id="295" parent="1" name="mysql.infoschema">
@@ -1140,7 +1140,7 @@ DYNAMIC</Options>
       <Position>3</Position>
     </column>
     <column id="319" parent="300" name="id">
-      <AutoIncrement>72</AutoIncrement>
+      <AutoIncrement>264</AutoIncrement>
       <DasType>int|0s</DasType>
       <NotNull>1</NotNull>
       <Position>4</Position>
@@ -1160,7 +1160,7 @@ DYNAMIC</Options>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="323" parent="301" name="id">
-      <AutoIncrement>39</AutoIncrement>
+      <AutoIncrement>42</AutoIncrement>
       <Comment>Menu主鍵</Comment>
       <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
@@ -1279,7 +1279,7 @@ DYNAMIC</Options>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="345" parent="303" name="id">
-      <AutoIncrement>239</AutoIncrement>
+      <AutoIncrement>429</AutoIncrement>
       <Comment>角色菜单主键ID</Comment>
       <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
@@ -1288,6 +1288,7 @@ DYNAMIC</Options>
     <column id="346" parent="303" name="role_id">
       <Comment>角色ID</Comment>
       <DasType>bigint|0s</DasType>
+      <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
     <column id="347" parent="303" name="menu_id">
@@ -1306,7 +1307,7 @@ DYNAMIC</Options>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="350" parent="304" name="id">
-      <AutoIncrement>37</AutoIncrement>
+      <AutoIncrement>44</AutoIncrement>
       <Comment>用户ID</Comment>
       <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
@@ -1366,39 +1367,45 @@ DYNAMIC</Options>
       <DasType>varchar(500)|0s</DasType>
       <Position>11</Position>
     </column>
-    <index id="361" parent="304" name="PRIMARY">
+    <column id="361" parent="304" name="uuid">
+      <DasType>varchar(256)|0s</DasType>
+      <NotNull>1</NotNull>
+      <Position>12</Position>
+    </column>
+    <index id="362" parent="304" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="362" parent="304" name="PRIMARY">
+    <key id="363" parent="304" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="363" parent="305" name="id">
-      <AutoIncrement>32</AutoIncrement>
+    <column id="364" parent="305" name="id">
+      <AutoIncrement>36</AutoIncrement>
       <Comment>用户角色主键ID</Comment>
       <DasType>bigint|0s</DasType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="364" parent="305" name="user_id">
+    <column id="365" parent="305" name="user_id">
       <Comment>用户ID</Comment>
       <DasType>bigint|0s</DasType>
+      <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <column id="365" parent="305" name="role_id">
+    <column id="366" parent="305" name="role_id">
       <Comment>角色ID</Comment>
       <DasType>bigint|0s</DasType>
       <Position>3</Position>
     </column>
-    <index id="366" parent="305" name="PRIMARY">
+    <index id="367" parent="305" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="367" parent="305" name="PRIMARY">
+    <key id="368" parent="305" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>

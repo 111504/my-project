@@ -8,14 +8,16 @@
       @open="handleOpen"
       @close="handleClose"
       :default-active="activeIndex"
+      :router="true"
   >
     <el-menu-item index="/index">
       <el-icon><home-filled /></el-icon>
       <span>首页</span>
     </el-menu-item>
-    <el-sub-menu v-for="(item,index) in menus" :index="item.path" :key="index" >
+    <el-sub-menu v-for="(item,index) in menuList" :index="item.path"  :key="index" >
       <template #title>
-        <el-icon><component :is="item.icon" ></component></el-icon>
+
+        <el-icon><svg-icon :name="item.icon" /></el-icon>
         <span>{{item.name}}</span>
       </template>
       <el-menu-item
@@ -24,7 +26,7 @@
           :key="index"
           @click="openTab(itemChild)"
       >
-        <el-icon ><component :is="itemChild.icon" ></component></el-icon>
+        <el-icon><svg-icon :name="itemChild.icon" /></el-icon>
         <span>{{itemChild.name}}</span>
       </el-menu-item>
     </el-sub-menu>
@@ -38,62 +40,26 @@ import {
   Location,
   Setting, HomeFilled, Menu,User,UserFilled,Avatar,OfficeBuilding
 ,Guide} from '@element-plus/icons-vue'
-
+import {useMenuStore} from "@/store/Store.js";
 import {ref,reactive} from "vue";
+import SvgIcon from "@/components/SvgIcon.vue";
 const activeIndex = ref('/index')
-
+const store = useMenuStore()
 const handleOpen = (key, keyPath) => {
   console.log(key, keyPath)
 }
 const handleClose = (key, keyPath) => {
-  console.log(key, keyPath)
+//  console.log(key, keyPath)
 }
 
-const menus = ref([
-  {
-    path: '1',
-    icon: 'Setting',
-    name: '系統管理',
-    children: [
-      {
-        path: '1-1',
-        icon: 'User',
-        name: '用戶管理',
-      },
-      {
-        path: '1-2',
-        icon: 'UserFilled',
-        name: '角色管理',
-      },
-      {
-        path: '1-3',
-        icon: 'Menu',
-        name: '菜單管理',
-      },
-    ],
-  },
-  {
-    path: '2',
-    icon: 'OfficeBuilding',
-    name: '業務管理',
-    children: [
-      {
-        path: '2-1',
-        icon: 'Guide',
-        name: '部門管理',
-      },
-      {
-        path: '2-2',
-        icon: 'Avatar',
-        name: '職位管理',
-      },
-    ],
-  },
-]);
+
+const menuList=store.GET_MENUS();
+
+console.log("拿到菜單",JSON.stringify(menuList) )
 
 function openTab(itemChild) {
   // 模擬點擊子菜單項時的行為
-  console.log('Opening tab:', itemChild);
+  console.log('Opening tab:', itemChild.path);
 }
 
 </script>

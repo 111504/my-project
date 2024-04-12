@@ -1,10 +1,16 @@
 package com.example.myprojectbackend.config;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.example.myprojectbackend.controller.SysRoleController;
+import com.example.myprojectbackend.dao.SysUserRepository;
 import com.example.myprojectbackend.entity.RestBean;
 import com.example.myprojectbackend.entity.AccountEntity;
 import com.example.myprojectbackend.entity.UserTokenEntity;
 import com.example.myprojectbackend.dao.AccountRepository;
 import com.example.myprojectbackend.dao.UserTokenRepository;
+import com.example.myprojectbackend.entity.system.SysRole;
+import com.example.myprojectbackend.entity.system.SysUserEntity;
+import com.example.myprojectbackend.service.SysRoleService;
 import com.example.myprojectbackend.vo.reponse.AuthorizeVO;
 
 import com.example.myprojectbackend.filter.JwtAuthorizeFilter;
@@ -29,6 +35,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -50,6 +57,11 @@ public class SecurityConfiguration {
     @Resource
     AccountRepository accountRepository;
 
+    @Resource
+    SysUserRepository sysUserRepository;
+
+    @Resource
+    SysRoleService sysRoleService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http)throws Exception{
@@ -128,47 +140,37 @@ public class SecurityConfiguration {
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
 
-        System.out.println("----印出authentication-----------------------------------");
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            System.out.println("- " + authority.getAuthority());
-        }
-
-        System.out.println(authentication.getPrincipal());
-        System.out.println(authentication.getDetails());
-        System.out.println(authentication.getCredentials());
-        System.out.println("----結束authentication-----------------------------------");
-        User user=(User)authentication.getPrincipal();
-        System.out.println("----印出User-----------------------------------");
-        System.out.println(user.getPassword());
-        System.out.println(user.getAuthorities());
-        System.out.println(user.getUsername());
-        //account 儲存的是，透過使用者名稱向資料庫查詢後，回傳的資料庫內容
-
-        AccountEntity accountEntity =accountRepository.findByUsernameOrEmail(user.getUsername());
-
-
+        String username=authentication.getName();
+        SysUserEntity  sysUserEntity= sysUserRepository.findAccountByNameOrEmail(username);
         UUID tokenId=UUID.randomUUID();
-        String token=utils.createJwt(user, accountEntity.getUuid(), accountEntity.getUsername(), accountEntity.getRole(),tokenId);
+        String token=utils.createJwt(sysUserEntity.getUuid(), sysUserEntity.getUsername(),tokenId);
 
+        List<SysRole> roleList = sysRoleService.list(new QueryWrapper<SysRole>().inSql("id", "SELECT role_id FROM sys_user_role WHERE user_id=" + sysUserEntity.getId()));
+        String role = "";
+        for(SysRole sysRole:roleList){
+
+            role+=sysRole.getCode().toString()+" ";
+        }
         AuthorizeVO vo=new AuthorizeVO();
         vo.setToken(token);
-        vo.setUuid(accountEntity.getUuid());
-        vo.setRole(accountEntity.getRole());
-        vo.setUsername(accountEntity.getUsername());
+        vo.setUuid(sysUserEntity.getUuid());
+      //  vo.setRole(sysUserEntity.getRole());
+        vo.setUsername(sysUserEntity.getUsername());
         vo.setExpire(utils.expireTime());
         vo.setTokenId(tokenId.toString());
-
-        //先停止user已使用的token
-        if(userTokenRepository.lockToken(accountEntity.getUuid())>0){
+        vo.setAuthorization(authentication.getAuthorities().toString());
+        vo.setEmail(sysUserEntity.getEmail());
+        vo.setPhoneNumber(sysUserEntity.getPhoneNumber());
+        vo.setRole(role);
+        //回傳使用者的紀錄
+        List numberOfUser= userTokenRepository.checkUserExist(sysUserEntity.getUuid());
+        if(numberOfUser.size()>1){
+            //先搜尋使用者是否有紀錄，如果有出現，代表用戶不是第一次登入，那麼進行鎖定該用戶token操作
+            userTokenRepository.lockToken(sysUserEntity.getUuid());
             System.out.println("success lock token");
-        }else{
-            System.out.println("fail lock token");
         }
-
         //儲存token進資料庫
-        userTokenRepository.save(new UserTokenEntity(accountEntity.getUuid(),tokenId,1,utils.expireTime()));
-
-
+        userTokenRepository.save(new UserTokenEntity(sysUserEntity.getUuid(),tokenId,1,utils.expireTime()));
         response.getWriter().write(RestBean.success(vo).asJsonString());
     }
 

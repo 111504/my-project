@@ -56,6 +56,7 @@ public class JwtUtils {
                 System.out.println("success lock token");
             }else{
                 System.out.println("fail lock token");
+                return  false;
             }
 
             String id=jwt.getId();
@@ -108,7 +109,7 @@ public class JwtUtils {
     * token生成，傳入使用者資料，id，使用者名稱
     *
     * */
-    public String createJwt(UserDetails details, String uuid, String username, String role,UUID tokenId){
+    public String createJwt(String uuid, String username,UUID tokenId){
 
 
        //賦予每一個jwt 不重複的id值
@@ -131,8 +132,8 @@ public class JwtUtils {
         System.out.println("createJwt  當前時間="+dateTimeNow);
         System.out.println("createJwt 不重複的JwtUuid="+tokenId);
         System.out.println("createJwt  過期時間="+expireTime());
-        System.out.println("createJwt  用戶身份="+role);
-        System.out.println("createJwt  用戶授權="+details.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
+ //       System.out.println("createJwt  用戶身份="+role);
+//        System.out.println("createJwt  用戶授權="+details.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
 
         return JWT.create()
                 //賦予使用者的uuid
@@ -140,14 +141,14 @@ public class JwtUtils {
                 //賦予每一個jwt 不重複的id值
                 .withJWTId(String.valueOf(tokenId))
                 .withClaim("name",username)
-                //屬性 authorities
-                .withClaim("authorities",details.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
+//                //屬性 authorities
+//                .withClaim("authorities",details.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 //jwt過期時間
                 .withExpiresAt(expireTime())
                  //簽發時間
                 .withIssuedAt(dateTimeNow)
                  //使用者身份
-                .withClaim("role", role)
+           //     .withClaim("role", role)
                 //獲取jwt的加密演算法
                 .sign(algorithm);
     }
