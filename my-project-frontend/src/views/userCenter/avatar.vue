@@ -16,11 +16,11 @@
         :on-success="handleAvatarSuccess"
         :before-upload="beforeAvatarUpload"
     >
-      <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-      <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+<!--      <img v-if="imageUrl" :src="imageUrl" class="avatar" />-->
+<!--      <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>-->
     </el-upload>
 
-    <el-button @click="handleConfirm" >确认更换</el-button>
+    <el-button @click="handleConfirm" >確認更換</el-button>
 
   </el-form>
 
@@ -30,10 +30,11 @@
 <script setup>
 
 import {defineProps, ref} from "vue";
-import requestUtil,{getServerUrl} from "@/util/request";
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
-import store from "@/store";
+import {useMenuStore} from "@/store/Store.js";
+import {get ,post} from "@/net"
+const store = useMenuStore()
 
 
 

@@ -2,7 +2,9 @@ package com.example.myprojectbackend.vo.reponse;
 
 import lombok.Data;
 import lombok.Setter;
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -19,4 +21,7 @@ public class AuthorizeVO {
     Date expire;
     String phoneNumber;
     String authorization;
+    LocalDateTime loginDate;
+    Long id;
+
 }

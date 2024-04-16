@@ -70,16 +70,17 @@ public class JwtAuthorizeFilter extends OncePerRequestFilter {
 
                 //根據jwt儲存的訊息 創立User物件後填入用戶訊息
                 UserDetails user=utils.toUser(jwt);
-                user.getUsername();
-                Long userId= sysUserRepository.finduUserIdByUsername( user.getUsername());
 
+                System.out.println("user.getUsername()="+user.getUsername());
+                Long userId= sysUserRepository.findUserIdByUsername( user.getUsername());
+                System.out.println("userId="+userId);
        //         System.out.println("user="+user);
        //         System.out.println("user Authorities="+user.getAuthorities());
        //   UsernamePasswordAuthenticationToken authentication=
        //        new UsernamePasswordAuthenticationToken(user,null,user.getAuthorities());
 
                 UsernamePasswordAuthenticationToken authentication=
-                        new UsernamePasswordAuthenticationToken(user,null,sysUserService.getUserAuthority(userId));
+                        new UsernamePasswordAuthenticationToken(user.getUsername(),null,sysUserService.getUserAuthority(userId));
 
                 //这一步骤是用来存储与认证请求相关的额外细节信息的。这通常包括请求的IP地址和Session ID等信息，这些信息可以在认证过程中或之后的安全审计中使用。
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -41,13 +41,20 @@ const router=createRouter({
         },{
             path:'/index',
             name:'首頁',
-            component:()=>import('@/layout/index.vue'),
+            // component:()=>import('@/layout/index.vue'),
+            component:()=>import('../layout/index.vue'),
+            redirect:'/mainPage',
             children:[
                 {
                     path: '/user',
                     name:'帳戶資訊',
                     component:()=>import('@/views/userCenter/index.vue')
                 },
+                {
+                    path: '/mainPage',
+                    name:'首頁',
+                    component:()=>import('@/views/mainPage/index.vue')
+                }
 
             ]
         }

@@ -25,8 +25,10 @@ export const useMenuStore = defineStore("menuStore",{
             sessionStorage.removeItem("menuList")
             localStorage.removeItem("menuList")
         },
-        SET_USER(state,user){
-            sessionStorage.setItem("user",user)
+        SET_USER(state,username){
+            // 将用户对象转换为 JSON 字符串
+
+            sessionStorage.setItem("user",JSON.stringify({username: username}))
         },
         SET_AUTH(state,authority){
             sessionStorage.setItem("authority",JSON.stringify(authority))
@@ -61,7 +63,7 @@ export const useMenuStore = defineStore("menuStore",{
             return JSON.parse(sessionStorage.getItem("menuList"))
         },
         GET_USER(){
-            return  sessionStorage.getItem("user")
+            return  JSON.parse(sessionStorage.getItem("user"))
         },
         GET_AUTH(){
             return JSON.parse(sessionStorage.getItem("authority"))

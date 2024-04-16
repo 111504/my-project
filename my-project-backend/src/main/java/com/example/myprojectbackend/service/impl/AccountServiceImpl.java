@@ -131,64 +131,24 @@ public class AccountServiceImpl implements AccountService {
         * 2.使用者信箱已經被使用
         *
         * */
-        if(sysUserRepository.findByUsernameExist(username)!=null||sysUserRepository.findByUsernameExist(email)!=null) {
-            return "錯誤，此用戶名或信箱已被使用";
-        }else{
-            System.out.println("開始創建帳號 ");
+
+        List<Map<String, Object>> accountChecks = sysUserRepository.findByUsernameOrEmailWithMatchType(username);
+        //開始創建帳號
+        if (!accountChecks.isEmpty()) {
+            // Assuming there is a match, we return the match_type which includes the failure reason
+            return (String) accountChecks.get(0).get("match_type");
+        }
+        // 如果沒有匹配，則可以創建帳號
+        System.out.println("開始創建帳號 ");
             String password=passwordEncoder.encode(vo.getPassword());
             ZonedDateTime nowInZone = ZonedDateTime.now();
             SysUserEntity sysUserEntity =new SysUserEntity(username,password,email,phonenumber,nowInZone.toLocalDateTime(),"創立帳號",StringUtil.genurateUserId());
-            sysUserRepository.save(sysUserEntity);
-            return "SUCCESS";
-
-
-            //            AccountEntity accountEntity =new AccountEntity(username,password,email,"user",nowInZone.toLocalDateTime()
-        }
-
-
-
-//        if (enabledOpt.isPresent()) {
-//            Integer isEnabled = enabledOpt.get();
-//            if (isEnabled==1) {
-//                return "該信箱 " + email + " 已使用中.請更換";
-//            } else {
-//                System.out.println("該信箱停用中 " + email + " 開始啟用.");
-//                String password=passwordEncoder.encode(vo.getPassword());
-//                ZonedDateTime nowInZone = ZonedDateTime.now();
-//                if(accountRepository.enableAccount(username,password,"user", nowInZone.toLocalDateTime(),userUuid,true,email)>0){
-//                    System.out.println("帳號啟用成功");
-//                    return "SUCCESS";
-//                }
-//                else{
-//                    return "帳號啟用失敗";
-//                }
-//
-//            }
-//        } else {
-//            System.out.println("開始創建帳號 ");
-//            String password=passwordEncoder.encode(vo.getPassword());
-//            ZonedDateTime nowInZone = ZonedDateTime.now();
-//            AccountEntity accountEntity =new AccountEntity(username,password,email,"user",nowInZone.toLocalDateTime(),userUuid,true);
-//
-//
-//            try {
-//                accountRepository.save(accountEntity);
-//                return "SUCCESS";
-//
-//            } catch (DataIntegrityViolationException e) {
-//                // 处理违反数据完整性的情况，比如重复的键等
-//              //  e.printStackTrace();
-//                // 返回null或者自定义错误对象
-//                return "DataIntegrityViolation Exception";
-//            } catch (Exception e) {
-//                // 捕获其他所有异常
-//               // e.printStackTrace();
-//                // 返回null或者自定义错误对象
-//                return "RegisterEmailAccount Exception";
-//            }
-//        }
-
-    }
+            if(sysUserRepository.save(sysUserEntity)!=null){
+                return "SUCCESS";
+            }else{
+                return "創建帳號失敗";
+            }
+   }
     private int generatorVerifyCode(int min,int max){
         Random random=new Random();
 

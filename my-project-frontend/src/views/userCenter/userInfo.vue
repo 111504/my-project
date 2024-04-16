@@ -1,9 +1,9 @@
 <template>
   <el-form ref="userRef" :model="form" :rules="rules" label-width="100px" >
-    <el-form-item label="手机号码：" prop="phonenumber">
-      <el-input v-model="form.phonenumber" maxlength="11" />
+    <el-form-item label="手機號碼：" prop="phonenumber">
+      <el-input v-model="form.phonenumber" maxlength="10" />
     </el-form-item>
-    <el-form-item label="用户邮箱：" prop="email">
+    <el-form-item label="用户信箱：" prop="email">
       <el-input v-model="form.email" maxlength="50" />
     </el-form-item>
     <el-form-item>
@@ -15,19 +15,19 @@
 
 <script setup>
 import {defineProps, ref} from "vue";
-import requestUtil from "@/util/request";
 import { ElMessage } from 'element-plus'
-import store from "@/store";
+import {useMenuStore} from "@/store/Store.js";
+import {get ,post} from "@/net"
+const store = useMenuStore()
+let  userId=localStorage.getItem("userId")
 
-const props=defineProps(
-    {
-      user:{
-        type:Object,
-        default:()=>{},
-        required:true
-      }
-    }
-)
+const props = defineProps({
+  user: {
+    type: Object,
+    default: () => ({}),
+    required:true
+  }
+})
 
 const form=ref({
   id:-1,
@@ -39,22 +39,24 @@ const userRef=ref(null)
 
 
 const rules = ref({
-  email: [{ required: true, message: "邮箱地址不能为空", trigger: "blur" }, { type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-  phonenumber: [{ required: true, message: "手机号码不能为空", trigger: "blur" }, { pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }],
+  email: [{ required: true, message: "信箱不能為空", trigger: "blur" }, { type: "email", message: "請輸入正確的郵箱地址", trigger: ["blur", "change"] }],
+  phonenumber: [{ required: true, message: "手機號碼不能為空", trigger: "blur" }, {pattern: /^09\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }],
 });
 
-form.value=props.user;
+// form.value=props.user;
+
+console.log("props=",props.user)
 
 const handleSubmit=()=>{
 
   userRef.value.validate(async (valid)=>{
     if(valid) {
-      let result = await requestUtil.post("sys/user/save", form.value);
-      let data = result.data;
-      if (data.code == 200) {
-        ElMessage.success("执行成功！")
-        store.commit("SET_USERINFO", form.value)
-      }
+      form.value.id=userId;
+
+      await post("api/user/save", form.value,()=>{
+        ElMessage.success("執行成功！")
+        store.SET_USER(store.$state,form.value)
+      });
     }
   })
 }

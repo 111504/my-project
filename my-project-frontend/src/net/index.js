@@ -67,22 +67,22 @@ function  login(username,password,remember,success,failure=defaultFailure){
     },(data)=>{
 
         console.log("登入成功"+data.uuid+'\r\n'+data.token+'\n'+data.authorization)
-        storeAccessToken(remember,data.token,data.tokenId,data.expire,data.uuid,data.username,data.authorization,data.phoneNumber,data.email,data.role)
+        storeAccessToken(remember,data.token,data.tokenId,data.expire,data.uuid,data.username,data.authorization,data.phoneNumber,data.email,data.role,data.loginDate,data.id)
         ElMessage.success(`登入成功 歡迎${data.username}成功登入`)
         success(data)
     },failure)
 }
 
-function storeAccessToken(remember,token,tokenId,expire,uuid,username,authorization,phoneNumber,email,role){
+function storeAccessToken(remember,token,tokenId,expire,uuid,username,authorization,phoneNumber,email,role,loginDate,id){
     console.log("有無勾選remember",remember)
     //如果store放在檔案最上面會報錯
     const store = useMenuStore()
-    const authObj={token:token,tokenId:tokenId,expire:expire,uuid:uuid,username:username,authorization:authorization,phoneNumber:phoneNumber,email:email,role:role}
+    const authObj={token:token,tokenId:tokenId,expire:expire,uuid:uuid,username:username,authorization:authorization,phoneNumber:phoneNumber,email:email,role:role,loginDate:loginDate}
     const str=JSON.stringify(authObj)
     if(remember) {
         localStorage.setItem(authItemName, str)
 
-
+        localStorage.setItem("userId",id);
         localStorage.setItem("user",username);
          store.SET_TOKEN(store.$state, token)
        // store.SET_MENUS(store.$state, resultObj.menus)
@@ -136,6 +136,9 @@ function logout(success,failure=defaultFailure){
 function accessHeader(){
 
     const token=takeAccessToken();
+    if(token){
+        console.log("token===",token)
+    }
 
     return token ? { 'Authorization':`Bearer ${takeAccessToken()}` } :{}
 }

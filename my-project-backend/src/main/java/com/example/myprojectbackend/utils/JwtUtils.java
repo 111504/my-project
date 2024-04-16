@@ -1,5 +1,6 @@
 package com.example.myprojectbackend.utils;
 
+import ch.qos.logback.classic.Logger;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -9,6 +10,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.myprojectbackend.dao.UserTokenRepository;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -78,12 +80,23 @@ public class JwtUtils {
             return false;
         Date now=new Date();
         long expire=Math.max(time.getTime()- now.getTime(),0);
-        template.opsForValue().set(Const.JWT_BLACK_LIST+uuid,"",expire, TimeUnit.MILLISECONDS);
-        return true;
+
+
+        try {
+            template.opsForValue().set(Const.JWT_BLACK_LIST+uuid,"",expire, TimeUnit.MILLISECONDS);
+            return true;
+        } catch (RedisConnectionFailureException e) {
+            return false;
+        }
     }
 
     private boolean isInvalidToken(String uuid){
-        return Boolean.TRUE.equals(template.hasKey(Const.JWT_BLACK_LIST+uuid));
+//        return Boolean.TRUE.equals(template.hasKey(Const.JWT_BLACK_LIST+uuid));
+        try {
+            return Boolean.TRUE.equals(template.hasKey(Const.JWT_BLACK_LIST + uuid));
+        } catch (RedisConnectionFailureException e) {
+            return false;
+        }
     }
     public DecodedJWT resolveJwt(String headerToken){
         String token=this.convertToken(headerToken);
@@ -165,12 +178,12 @@ public class JwtUtils {
     public UserDetails toUser(DecodedJWT jwt){
         Map<String , Claim> claims=jwt.getClaims();
 
-        String rolesStr[] = claims.get("role").asString().split(",");
+      //  String rolesStr[] = claims.get("role").asString().split(",");
 
         return User
                 .withUsername(claims.get("name").asString())
                 .password("******")
-                .roles(rolesStr)
+         //       .roles(rolesStr)
                 .build();
     }
 

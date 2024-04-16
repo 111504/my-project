@@ -193,7 +193,24 @@ public class SysUserController {
         sysUserRoleService.saveBatch(userRoleList);
         return RestBean.success();
     }
-
+    /**
+     * 修改密码
+     * @param sysUser
+     * @return
+     */
+    @PostMapping("/updateUserPwd")
+    @PreAuthorize("hasAuthority('system:user:edit')")
+    public RestBean<Void> updateUserPwd(@RequestBody SysUser sysUser){
+        SysUser currentUser = sysUserService.getById(sysUser.getId());
+        if(bCryptPasswordEncoder.matches(sysUser.getOldPassword(),currentUser.getPassword())){
+            currentUser.setPassword(bCryptPasswordEncoder.encode(sysUser.getNewPassword()));
+            currentUser.setUpdateTime(new Date());
+            sysUserService.updateById(currentUser);
+            return RestBean.success();
+        }else{
+            return RestBean.failure(404,"輸入舊密碼錯誤！");
+        }
+    }
     @PostMapping("/test")
     public String listUserTest() {
 

@@ -8,7 +8,7 @@
     </span>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item>用戶姓名:{{currentUser}}</el-dropdown-item>
+        <el-dropdown-item>用戶姓名:{{currentUser.username}}</el-dropdown-item>
         <el-dropdown-item class="dropdown-item">
           <router-link class="myrouter-link" :to="{name:'帳戶資訊'}">帳戶資訊</router-link>
         </el-dropdown-item>

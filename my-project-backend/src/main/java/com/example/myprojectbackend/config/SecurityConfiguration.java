@@ -162,6 +162,8 @@ public class SecurityConfiguration {
         vo.setEmail(sysUserEntity.getEmail());
         vo.setPhoneNumber(sysUserEntity.getPhoneNumber());
         vo.setRole(role);
+        vo.setLoginDate(sysUserEntity.getLoginDate());
+        vo.setId(sysUserEntity.getId());
         //回傳使用者的紀錄
         List numberOfUser= userTokenRepository.checkUserExist(sysUserEntity.getUuid());
         if(numberOfUser.size()>1){

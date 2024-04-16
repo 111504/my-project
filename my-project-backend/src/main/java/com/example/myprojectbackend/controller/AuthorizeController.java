@@ -89,7 +89,7 @@ public class AuthorizeController {
             return RestBean.failure(404,"用戶資訊是必須的").asJsonString();
         }
         //根據uuid找尋用戶id
-        Long user_id=sysUserRepository.finduUserIdByUuid(userUuid);
+        Long user_id=sysUserRepository.findUserIdByUuid(userUuid);
 
         if (user_id == null) {
             return RestBean.success("沒有找到資料，錯誤的用戶資訊").asJsonString();
