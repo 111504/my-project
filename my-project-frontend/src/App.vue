@@ -1,9 +1,10 @@
 <script setup>
 import {onMounted} from "vue";
-import {checkTokenEnable, requestUsersInformation} from "@/net"
+import {checkTokenEnable, requestUsersInformation,TestGet} from "@/net"
 onMounted(() => {
   // 頁面載入或刷新時 向後端發送檢查token是否合法
   checkTokenEnable();
+  TestGet("/customers",() => {});
  // requestUsersInformation('/api/auth/requestUserInformation');
 });
 </script>

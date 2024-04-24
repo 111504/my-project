@@ -218,4 +218,12 @@ public class SysUserController {
         return RestBean.success("listUserTest").asJsonString();
     }
 
+
+    @GetMapping("/test2")
+    public String listUserTest2() {
+
+
+        return "test successfully";
+    }
+
 }

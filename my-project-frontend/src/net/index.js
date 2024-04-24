@@ -42,7 +42,10 @@ function internalGet(url,header,success,failure,error=defaultError){
         }
     }).catch(err=>error(err))
 }
+function TestGet(url,success,failure,error){
 
+    internalGet(url,{},success,failure)
+}
 
 function  get(url,success,failure=defaultFailure){
 
@@ -270,4 +273,4 @@ function requestUsersInformation(url,remember,error=defaultError) {
 }
 
 
-export {login,logout,get,post,unauthorized,getUserInfo,checkTokenEnable,requestUsersInformation,accessHeader}
+export {TestGet,login,logout,get,post,unauthorized,getUserInfo,checkTokenEnable,requestUsersInformation,accessHeader}
