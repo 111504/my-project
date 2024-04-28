@@ -43,6 +43,7 @@ function userLogout(){
   position: relative;
   width: 100%;
   height: 100vh;
+  background-color: #f0f2f5;
 }
 
 .common-layout el-container {
@@ -66,7 +67,7 @@ function userLogout(){
 }
 
 .common-main {
-  background: #fff;
+  background: #cbd8e3;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   transition: box-shadow 0.3s ease-in-out;
   padding: 0px 0px 20px;

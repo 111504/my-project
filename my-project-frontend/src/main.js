@@ -12,10 +12,11 @@ import SvgIcon from "./components/SvgIcon.vue"
 import 'virtual:svg-icons-register'
 import "./router/permission.js"
 // 国际化中文
-
 import {zhTw} from "element-plus/es/locale/index";
-
-
+// Import our custom CSS
+import '../src/scss/styles.scss'
+// Import all of Bootstrap's JS
+import * as bootstrap from 'bootstrap'
 
 axios.defaults.baseURL="http://localhost:8080"
 const pinia = createPinia()
@@ -36,5 +37,7 @@ app.component("svg-icon",SvgIcon)
 console.log("app.use(router)----")
 console.log("在main裡的路由",router.getRoutes())
 app.use(router)
+
+
 console.log("app.use(router) finish----")
 app.mount('#app')

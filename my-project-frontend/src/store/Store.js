@@ -25,6 +25,14 @@ export const useMenuStore = defineStore("menuStore",{
             sessionStorage.removeItem("menuList")
             localStorage.removeItem("menuList")
         },
+        CLEAR_TOKEN(){
+            sessionStorage.removeItem("token")
+            localStorage.removeItem("token")
+        },
+        CLEAR_AUTH(){
+            sessionStorage.removeItem("authority")
+            localStorage.removeItem("authority")
+        },
         SET_USER(state,username){
             // 将用户对象转换为 JSON 字符串
 
@@ -32,6 +40,7 @@ export const useMenuStore = defineStore("menuStore",{
         },
         SET_AUTH(state,authority){
             sessionStorage.setItem("authority",JSON.stringify(authority))
+
         },
         SET_ROUTES_STATE(state,hasRoutes){
 
@@ -57,16 +66,37 @@ export const useMenuStore = defineStore("menuStore",{
             ]
         },
         GET_TOKEN(){
-            return sessionStorage.getItem("token")
+            let token=sessionStorage.getItem("token");
+            if (!token) {
+                token = localStorage.getItem("token");
+            }
+            return token
         },
         GET_MENUS(){
-            return JSON.parse(sessionStorage.getItem("menuList"))
+            let menus=sessionStorage.getItem("menuList");
+            if(!menus){
+                menus = localStorage.getItem("menuList");
+            }
+            return JSON.parse(menus)
         },
         GET_USER(){
-            return  JSON.parse(sessionStorage.getItem("user"))
+            // 嘗試從 sessionStorage 獲取用戶數據
+            let user = sessionStorage.getItem("user");
+
+            // 如果在 sessionStorage 中找不到用戶數據，則從 localStorage 獲取
+            if (!user) {
+                user = localStorage.getItem("user");
+            }
+
+
+            return JSON.parse(user);
         },
         GET_AUTH(){
-            return JSON.parse(sessionStorage.getItem("authority"))
+            let authority=sessionStorage.getItem('authority');
+            if (!authority) {
+                authority = localStorage.getItem("authority");
+            }
+            return JSON.parse(authority)
         },
         GET_ROUTES_STATE(){
             return localStorage.getItem("state")

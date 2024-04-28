@@ -41,7 +41,7 @@ const router=createRouter({
         },{
             path:'/index',
             name:'首頁',
-            // component:()=>import('@/layout/index.vue'),
+            // component:()=>import('@/layout/index2.vue'),
             component:()=>import('../layout/index.vue'),
             redirect:'/mainPage',
             children:[
@@ -52,7 +52,7 @@ const router=createRouter({
                 },
                 {
                     path: '/mainPage',
-                    name:'首頁',
+                    name:'個人主頁',
                     component:()=>import('@/views/mainPage/index.vue')
                 }
 

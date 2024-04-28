@@ -86,7 +86,7 @@ function userLogin(){
       <el-row>
         <el-col :span="12"  style="text-align: left">
           <el-form-item prop="remember">
-            <el-checkbox v-model="form.remember" label="記住我">
+            <el-checkbox id="check-box" v-model="form.remember" label="記住我">
 
             </el-checkbox>
           </el-form-item>

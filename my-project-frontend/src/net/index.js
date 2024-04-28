@@ -20,7 +20,7 @@ const defaultError=(err)=>{
 function internalPost(url,data,header,success,failure,error=defaultError){
   //  console.log("enter internalPost data"+data.password+" "+data.username)
     axios.post(url,data,{headers:header}).then((response)=>{
-        console.log("response.data internalPost",response.data)
+      //  console.log("response.data internalPost",response.data)
         if(response.data.code===200){
       //      console.log("enter post"+response.data.data)
             success(response.data.data)
@@ -33,7 +33,7 @@ function internalPost(url,data,header,success,failure,error=defaultError){
 
 function internalGet(url,header,success,failure,error=defaultError){
     axios.get(url,{headers:header}).then(response=>{
-        console.log(response.data)
+   //     console.log(response.data)
         if(response.data.code===200){
         //    console.log("enter get"+response.data.data)
             success(response.data.data)
@@ -42,10 +42,7 @@ function internalGet(url,header,success,failure,error=defaultError){
         }
     }).catch(err=>error(err))
 }
-function TestGet(url,success,failure,error){
 
-    internalGet(url,{},success,failure)
-}
 
 function  get(url,success,failure=defaultFailure){
 
@@ -87,8 +84,8 @@ function storeAccessToken(remember,token,tokenId,expire,uuid,username,authorizat
 
         localStorage.setItem("userId",id);
         localStorage.setItem("user",username);
+        localStorage.setItem("authority",JSON.stringify(authorization))
          store.SET_TOKEN(store.$state, token)
-       // store.SET_MENUS(store.$state, resultObj.menus)
          store.SET_USER(store.$state, username)
          store.SET_AUTH(store.$state,authorization)
 
@@ -96,7 +93,6 @@ function storeAccessToken(remember,token,tokenId,expire,uuid,username,authorizat
     else {
         sessionStorage.setItem(authItemName, str);
          store.SET_TOKEN(store.$state, token)
-        // store.SET_MENUS(store.$state, resultObj.menus)
          store.SET_USER(store.$state, username)
         store.SET_AUTH(store.$state,authorization)
     }
@@ -122,6 +118,8 @@ function deleteAccessToken(){
     const store = useMenuStore()
     console.log("刪除token 清空菜單")
     store.CLEAR_MENUS()
+    store.CLEAR_TOKEN()
+    store.CLEAR_AUTH()
     localStorage.removeItem(authItemName);
     sessionStorage.removeItem(authItemName);
 
@@ -253,11 +251,15 @@ function requestUsersInformation(url,remember,error=defaultError) {
     const urlWithParams = `${url}?${params}`;
     axios.get(urlWithParams).then((response) => {
 
-      //  console.log("使用者相關資訊"+response.data.data)
         if(response.data.code===200){
             console.log("使用者相關資訊"+JSON.stringify(response.data.data))
             let menulist=response.data.data;
-        //    sessionStorage.setItem("menuList",JSON.stringify(menulist));
+            if(!menulist){
+                ElMessage.warning("錯誤!菜單為空")
+            }
+            if(remember){
+                localStorage.setItem("menuList",JSON.stringify(menulist))
+            }
             store.SET_MENUS(store.$state, menulist)
             console.log("儲存菜單資料")
             store.SET_ROUTES_STATE(store.$state, false)
@@ -273,4 +275,4 @@ function requestUsersInformation(url,remember,error=defaultError) {
 }
 
 
-export {TestGet,login,logout,get,post,unauthorized,getUserInfo,checkTokenEnable,requestUsersInformation,accessHeader}
+export {login,logout,get,post,unauthorized,getUserInfo,checkTokenEnable,requestUsersInformation,accessHeader}

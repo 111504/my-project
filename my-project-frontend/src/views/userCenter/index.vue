@@ -31,7 +31,7 @@ const activeTab = ref("userInfo");
           </template>
           <div>
             <div class="text-center">
-              <Avatar :user="currentUser"/>
+<!--              <Avatar :user="currentUser"/>-->
             </div>
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
