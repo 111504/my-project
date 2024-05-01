@@ -133,17 +133,17 @@ const handleSelectionChange = (selection)=>{
 }
 
 
-const handleRoleDialogValue = (userId,roleList)=>{
-  console.log("handleRoleDialogValue userId="+userId)
-  id.value=userId;
+const handleRoleDialogValue = (id,roleList)=>{
+  console.log("handleRoleDialogValue id="+id)
+  id.value=id;
   sysRoleList.value=roleList;
   roleDialogVisible.value=true
 }
 
-const handleDialogValue=(userId)=>{
-  if(userId){
-    console.log("用户修改 userId="+userId)
-    id.value=userId;
+const handleDialogValue=(id)=>{
+  if(id){
+    console.log("用户修改 id="+id)
+    id.value=id;
     dialogTitle.value="用户修改"
   }else{
 

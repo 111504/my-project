@@ -82,7 +82,7 @@ public class SysUser extends BaseEntity implements Serializable {
     /**
      * 用戶的 uuid
      */
-    @TableField(exist = false)
+    @TableField(value = "uuid")
     public String uuid;
 
 }

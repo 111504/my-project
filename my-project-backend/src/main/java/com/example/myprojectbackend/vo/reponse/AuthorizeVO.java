@@ -23,5 +23,6 @@ public class AuthorizeVO {
     String authorization;
     LocalDateTime loginDate;
     Long id;
+    String avatar;
 
 }

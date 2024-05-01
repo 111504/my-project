@@ -70,6 +70,7 @@ public class SecurityConfiguration {
                                 authorizeHttpRequests
                         //對於匹配 /api/auth/** 這個路徑模式的所有請求，都允許所有用戶（包括未經認證的用戶）訪問。
                         .requestMatchers("/api/auth/**").permitAll()
+                                        .requestMatchers("/api/picture/**").permitAll()
                                 //該api限定只能有身份為admin才能訪問
                                 .requestMatchers("/api/test/admin").hasRole("admin")
                                 .requestMatchers("/api/test/hello").hasRole("user")
@@ -154,7 +155,6 @@ public class SecurityConfiguration {
         AuthorizeVO vo=new AuthorizeVO();
         vo.setToken(token);
         vo.setUuid(sysUserEntity.getUuid());
-      //  vo.setRole(sysUserEntity.getRole());
         vo.setUsername(sysUserEntity.getUsername());
         vo.setExpire(utils.expireTime());
         vo.setTokenId(tokenId.toString());
@@ -164,6 +164,7 @@ public class SecurityConfiguration {
         vo.setRole(role);
         vo.setLoginDate(sysUserEntity.getLoginDate());
         vo.setId(sysUserEntity.getId());
+        vo.setAvatar(sysUserEntity.getAvatar());
         //回傳使用者的紀錄
         List numberOfUser= userTokenRepository.checkUserExist(sysUserEntity.getUuid());
         if(numberOfUser.size()>1){

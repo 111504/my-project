@@ -42,6 +42,9 @@ export const useMenuStore = defineStore("menuStore",{
             sessionStorage.setItem("authority",JSON.stringify(authority))
 
         },
+        SET_AVATAR(state,avatar){
+            sessionStorage.setItem("avatar",avatar)
+        },
         SET_ROUTES_STATE(state,hasRoutes){
 
             state.hasRoutes = hasRoutes
@@ -91,6 +94,15 @@ export const useMenuStore = defineStore("menuStore",{
 
             return JSON.parse(user);
         },
+        GET_USER_ID(){
+            let id = sessionStorage.getItem("id");
+
+            // 如果在 sessionStorage 中找不到用戶數據，則從 localStorage 獲取
+            if (!id) {
+                id = localStorage.getItem("id");
+            }
+            return (id);
+        },
         GET_AUTH(){
             let authority=sessionStorage.getItem('authority');
             if (!authority) {
@@ -100,6 +112,13 @@ export const useMenuStore = defineStore("menuStore",{
         },
         GET_ROUTES_STATE(){
             return localStorage.getItem("state")
+        },
+        GET_AVATAR(){
+            let avatar=sessionStorage.getItem('avatar');
+            if (!avatar) {
+                avatar = localStorage.getItem("avatar");
+            }
+            return (avatar)
         },
         HAS_AUTH(needAuth){
             const authObjList  = this.GET_AUTH();

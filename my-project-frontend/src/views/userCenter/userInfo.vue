@@ -19,7 +19,7 @@ import { ElMessage } from 'element-plus'
 import {useMenuStore} from "@/store/Store.js";
 import {get ,post} from "@/net"
 const store = useMenuStore()
-let  userId=localStorage.getItem("userId")
+let  id=localStorage.getItem("id")
 
 const props = defineProps({
   user: {
@@ -51,7 +51,7 @@ const handleSubmit=()=>{
 
   userRef.value.validate(async (valid)=>{
     if(valid) {
-      form.value.id=userId;
+      form.value.id=id;
 
       await post("api/user/save", form.value,()=>{
         ElMessage.success("執行成功！")

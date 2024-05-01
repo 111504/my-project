@@ -67,34 +67,39 @@ function  login(username,password,remember,success,failure=defaultFailure){
     },(data)=>{
 
         console.log("登入成功"+data.uuid+'\r\n'+data.token+'\n'+data.authorization)
-        storeAccessToken(remember,data.token,data.tokenId,data.expire,data.uuid,data.username,data.authorization,data.phoneNumber,data.email,data.role,data.loginDate,data.id)
+        storeAccessToken(remember,data.token,data.tokenId,data.expire,data.uuid,data.username,data.authorization,data.phoneNumber,data.email,data.role,data.loginDate,data.id,data.avatar)
         ElMessage.success(`登入成功 歡迎${data.username}成功登入`)
         success(data)
     },failure)
 }
 
-function storeAccessToken(remember,token,tokenId,expire,uuid,username,authorization,phoneNumber,email,role,loginDate,id){
+function storeAccessToken(remember,token,tokenId,expire,uuid,username,authorization,phoneNumber,email,role,loginDate,id,avatar){
+
+    // avatar=avatar.split('.').slice(0, -1).join('.');
     console.log("有無勾選remember",remember)
     //如果store放在檔案最上面會報錯
     const store = useMenuStore()
-    const authObj={token:token,tokenId:tokenId,expire:expire,uuid:uuid,username:username,authorization:authorization,phoneNumber:phoneNumber,email:email,role:role,loginDate:loginDate}
+    const authObj={token:token,tokenId:tokenId,expire:expire,uuid:uuid,username:username,authorization:authorization,phoneNumber:phoneNumber,email:email,role:role,loginDate:loginDate,avatar:avatar,id:id}
     const str=JSON.stringify(authObj)
     if(remember) {
         localStorage.setItem(authItemName, str)
 
-        localStorage.setItem("userId",id);
-        localStorage.setItem("user",username);
+        localStorage.setItem("id",id);
+        localStorage.setItem("user",JSON.stringify({username: username}))
         localStorage.setItem("authority",JSON.stringify(authorization))
-         store.SET_TOKEN(store.$state, token)
-         store.SET_USER(store.$state, username)
-         store.SET_AUTH(store.$state,authorization)
-
+        localStorage.setItem("token",token)
+        localStorage.setItem("avatar",avatar)
+        store.SET_TOKEN(store.$state, token)
+        store.SET_USER(store.$state, username)
+        store.SET_AUTH(store.$state,authorization)
+        store.SET_AVATAR(store.$state,avatar)
     }
     else {
         sessionStorage.setItem(authItemName, str);
-         store.SET_TOKEN(store.$state, token)
-         store.SET_USER(store.$state, username)
+        store.SET_TOKEN(store.$state, token)
+        store.SET_USER(store.$state, username)
         store.SET_AUTH(store.$state,authorization)
+        store.SET_AVATAR(store.$state,avatar)
     }
 }
 
@@ -259,8 +264,10 @@ function requestUsersInformation(url,remember,error=defaultError) {
             }
             if(remember){
                 localStorage.setItem("menuList",JSON.stringify(menulist))
+
             }
             store.SET_MENUS(store.$state, menulist)
+
             console.log("儲存菜單資料")
             store.SET_ROUTES_STATE(store.$state, false)
             console.log("重置動態菜單flag")

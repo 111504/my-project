@@ -30,3 +30,5 @@ spring:
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+avatarImageFilePath:  E:\my-project\my-project-backend\src\main\resources\static\image\userAvatar\

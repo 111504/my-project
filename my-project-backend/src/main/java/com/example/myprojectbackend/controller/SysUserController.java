@@ -4,22 +4,25 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.myprojectbackend.common.Constant;
 import com.example.myprojectbackend.entity.RestBean;
-import com.example.myprojectbackend.entity.system.PageBean;
-import com.example.myprojectbackend.entity.system.SysRole;
-import com.example.myprojectbackend.entity.system.SysUser;
-import com.example.myprojectbackend.entity.system.SysUserRole;
+import com.example.myprojectbackend.entity.system.*;
 import com.example.myprojectbackend.service.SysRoleService;
 import com.example.myprojectbackend.service.SysUserRoleService;
 import com.example.myprojectbackend.service.SysUserService;
+import com.example.myprojectbackend.utils.DateUtil;
 import com.example.myprojectbackend.utils.StringUtil;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @Validated
@@ -38,6 +41,10 @@ public class SysUserController {
 
     @Autowired
     private SysUserRoleService sysUserRoleService;
+
+
+    @Value("${avatarImageFilePath}")
+    private String avatarImageFilePath;
 
     @PostMapping("/list")
     public String listUser(@RequestBody PageBean pageBean) {
@@ -211,9 +218,65 @@ public class SysUserController {
             return RestBean.failure(404,"輸入舊密碼錯誤！");
         }
     }
-    @PostMapping("/test")
-    public String listUserTest() {
 
+    @PostMapping("/uploadImage")
+    @PreAuthorize("hasAuthority('system:user:edit')")
+    public RestBean<Map<String,Object>> uploadImage(@RequestParam("file") MultipartFile file) {
+
+
+            if (!file.isEmpty()) {
+                // 獲取文件名
+                String originalFilename = file.getOriginalFilename();
+                String suffixName = null;
+                if (originalFilename != null) {
+                    suffixName = originalFilename.substring(originalFilename.lastIndexOf("."));
+                }
+                String newFileName = DateUtil.currentTimeStr()+suffixName;
+                try {
+                    FileUtils.copyInputStreamToFile(file.getInputStream(), new File(avatarImageFilePath + newFileName));
+                } catch (IOException e) {
+                    return   RestBean.failure(500,"上傳檔案失敗");
+                }
+                Map<String,Object> data = new HashMap<>();
+                data.put("title",newFileName);
+                data.put("src","api/picture/fileSystem/"+newFileName);
+                return   RestBean.success(data,"上傳成功");
+            }
+            else{
+                return   RestBean.failure(500,"上傳檔案失敗");
+            }
+    }
+
+
+    /**
+     * 更新头像
+     * @param sysImgInfo
+     * @return
+     */
+    @PostMapping("/updateAvatar")
+    @PreAuthorize("hasAuthority('system:user:edit')")
+    public RestBean<String> updateAvatar(@RequestBody SysImgInfo sysImgInfo){
+        System.out.println("sysImgInfo="+sysImgInfo.toString());
+        if(sysImgInfo.getAvatar()==null){
+            return RestBean.failure(500,"照片更換失敗，資料為空，請聯絡管理員！");
+        }
+        SysUser currentUser = sysUserService.getById(sysImgInfo.getId());
+        currentUser.setAvatar(sysImgInfo.getAvatar());
+        System.out.println("currentUser="+ currentUser);
+
+        if (sysUserService.updateById(currentUser)) {
+            return RestBean.success("照片更換成功！");
+        }
+        else{
+            return  RestBean.failure(500,"照片更換失敗，請聯絡管理員！");
+        }
+    }
+
+
+    @PostMapping("/test")
+    @PreAuthorize("hasAuthority('system:user:edit')")
+    public String listUserTest(@RequestBody SysUser sysUser) {
+        System.out.println("sysUser="+sysUser);
 
         return RestBean.success("listUserTest").asJsonString();
     }

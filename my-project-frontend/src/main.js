@@ -11,7 +11,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import SvgIcon from "./components/SvgIcon.vue"
 import 'virtual:svg-icons-register'
 import "./router/permission.js"
-// 国际化中文
+// 國際化中文
 import {zhTw} from "element-plus/es/locale/index";
 // Import our custom CSS
 import '../src/scss/styles.scss'

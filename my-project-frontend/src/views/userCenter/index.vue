@@ -1,5 +1,5 @@
 <script setup>
-// import avatar from './avatar.vue'
+import Avatar from './avatar.vue'
 import {ref} from "vue";
 import userInfo from './userInfo.vue'
 import ResetPwd from './resetPwd.vue'
@@ -31,7 +31,7 @@ const activeTab = ref("userInfo");
           </template>
           <div>
             <div class="text-center">
-<!--              <Avatar :user="currentUser"/>-->
+              <Avatar :user="currentUser"/>
             </div>
             <ul class="list-group list-group-striped">
               <li class="list-group-item">

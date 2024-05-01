@@ -54,7 +54,12 @@ const router=createRouter({
                     path: '/mainPage',
                     name:'個人主頁',
                     component:()=>import('@/views/mainPage/index.vue')
-                }
+                },
+                {
+                    path: '/mainPage2',
+                    name:'個人測試',
+                    component:()=>import('@/views/mainPage/indexTest.vue')
+                },
 
             ]
         }

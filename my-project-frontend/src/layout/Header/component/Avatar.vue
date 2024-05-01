@@ -1,14 +1,16 @@
 <template>
   <el-dropdown class="el-drop" trigger="click">
     <span class="el-dropdown-link">
-      <el-avatar :icon="UserFilled" />
+      <div class="m-2"> {{currentUser.username}}</div>
+       <el-icon><HomeFilled/></el-icon>&nbsp;&nbsp;
       <el-icon class="el-icon--right">
         <arrow-down />
       </el-icon>
     </span>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item>用戶姓名:{{currentUser.username}}</el-dropdown-item>
+        <el-avatar :size="40" :src="avatarUrl" />
+        <el-dropdown-item>{{currentUser.username}}</el-dropdown-item>
         <el-dropdown-item class="dropdown-item">
           <router-link class="myrouter-link" :to="{name:'帳戶資訊'}">帳戶資訊</router-link>
         </el-dropdown-item>
@@ -20,24 +22,22 @@
 
 
 <script setup>
-import {ArrowDown, UserFilled} from '@element-plus/icons-vue'
+import {ArrowDown, HomeFilled, UserFilled} from '@element-plus/icons-vue'
 import {useMenuStore} from '@/store/Store.js'
 import {ref} from "vue";
 import {useRouter} from "vue-router";
 import {logout} from "@/net/index.js";
+import {getServerUrl} from "@/net/request.js";
 const router = useRouter()
 const avatarUrl = ref('')
 const store = useMenuStore()
-// const store = useMenuStore()
 const currentUser=ref(store.GET_USER());
-console.log(currentUser.value)
+const avatar=store.GET_AVATAR();
+ avatarUrl.value = getServerUrl()+`api/picture/fileSystem/${avatar}`
 
-avatarUrl.value = `@/assets/user.png`
 function userLogout() {
   logout(() =>{
- //  store.CLEAR_MENUS()
     router.push("/")
-
   })
 }
 
@@ -60,6 +60,13 @@ function userLogout() {
 
 .el-drop {
   outline: none;
+
+}
+
+.el-dropdown-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
 }
 
