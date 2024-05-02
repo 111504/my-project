@@ -34,6 +34,7 @@ import { Plus } from '@element-plus/icons-vue'
 import {useMenuStore} from "@/store/Store.js";
 import {getServerUrl} from "@/net/request.js";
 import {post,accessHeader} from "@/net"
+import axios from "axios";
 
 const store = useMenuStore()
 //
@@ -56,6 +57,12 @@ const headers=ref({
 const form=ref({
   id:-1,
   avatar:''
+})
+
+const formTest=ref({
+   a:1,
+   b:"2",
+   c:3
 })
 
 const formRef=ref(null)
@@ -101,6 +108,15 @@ const handleConfirm=async()=>{
   });
 }
 
+
+const handleConfirmTest=async()=>{
+  await post("api/user/test",formTest.value,(res)=>{
+    //const response=JSON.parse(res);
+    console.log("更改照片成功",res.a+"\n"+res.b+"\n");
+    ElMessage.success("更改照片成功！")
+  });
+
+}
 </script>
 
 <style>

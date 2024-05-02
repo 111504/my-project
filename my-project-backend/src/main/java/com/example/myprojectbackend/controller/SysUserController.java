@@ -8,8 +8,11 @@ import com.example.myprojectbackend.entity.system.*;
 import com.example.myprojectbackend.service.SysRoleService;
 import com.example.myprojectbackend.service.SysUserRoleService;
 import com.example.myprojectbackend.service.SysUserService;
+import com.example.myprojectbackend.utils.AjaxTest;
 import com.example.myprojectbackend.utils.DateUtil;
 import com.example.myprojectbackend.utils.StringUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -275,12 +278,20 @@ public class SysUserController {
 
     @PostMapping("/test")
     @PreAuthorize("hasAuthority('system:user:edit')")
-    public String listUserTest(@RequestBody SysUser sysUser) {
-        System.out.println("sysUser="+sysUser);
-
-        return RestBean.success("listUserTest").asJsonString();
+    public RestBean<String> listUserTest(@RequestBody AjaxTest ajaxTest) throws JsonProcessingException {
+        System.out.println("ajaxTest="+ajaxTest.toString());
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = mapper.writeValueAsString(ajaxTest);
+        return RestBean.success(jsonString);
     }
 
+    @PostMapping("/test-no-json")
+    @PreAuthorize("hasAuthority('system:user:edit')")
+    public RestBean<AjaxTest> listUserTestJson(@RequestBody AjaxTest ajaxTest) throws JsonProcessingException {
+        System.out.println("ajaxTest="+ajaxTest.toString());
+
+        return RestBean.success(ajaxTest);
+    }
 
     @GetMapping("/test2")
     public String listUserTest2() {
