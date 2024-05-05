@@ -42,4 +42,4 @@ spring:
   profiles:
     active: prod
 
-avatarImageFilePath:  E:\my-project\my-project-backend\src\main\resources\static\image\userAvatar\
+avatarImageFilePath:  "${AVATAR_IMAGE_PATH_LOCAL}"
