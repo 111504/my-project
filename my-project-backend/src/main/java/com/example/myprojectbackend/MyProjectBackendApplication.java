@@ -4,10 +4,12 @@ import com.example.myprojectbackend.config.HelloService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.PropertySource;
 
 import java.util.TimeZone;
 
 @SpringBootApplication
+@PropertySource("classpath:env.properties")
 public class MyProjectBackendApplication {
 
 

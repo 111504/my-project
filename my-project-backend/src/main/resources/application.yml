@@ -1,10 +1,10 @@
 
 spring:
   mail:
-    host: smtp.gmail.com
-    post: 587
-    username: 111504one@gmail.com
-    password: zehckajnmrhlkakc
+    host: ${MAIL_HOST}
+    post: ${MAIL_POST}
+    username: ${MAIL_USER}
+    password: ${MAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -13,22 +13,22 @@ spring:
             enable: true
             required: true
   rabbitmq:
-    host: localhost
-    username: guest
-    password: guest
+    host: ${RABBITMQ_HOST}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
     virtual-host: /
-    port: 5672
+    port: ${RABBITMQ_PORT}
   security:
     filter:
       order: -100
     jwt:
-      key: abcdefghijk
+      key: ${SECURITY_KEY}
       expire: 1
 
   datasource:
-    url: jdbc:mysql://localhost:3306/test?verifyServerCertificate=false&useSSL=false&requireSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: 1234
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: ${DATASOURCE_DRIVER}
 
 avatarImageFilePath:  E:\my-project\my-project-backend\src\main\resources\static\image\userAvatar\
