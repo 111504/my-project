@@ -8,4 +8,4 @@ datasource:
 server:
   port: 8080
 
-avatarImageFilePath: d:\\GitHub_P\\my-project\\my-project-backend\\src\\main\\resources\\static\\image\\userAvatar\\
+avatarImageFilePath: c:/Src/userAvatar
