@@ -24,11 +24,22 @@ spring:
     jwt:
       key: ${SECURITY_KEY}
       expire: 1
+  data:
+    redis:
+      database: 0
+      host: "${REDIS_HOST}"
+      port: "${REDIS_PORT}"
+      timeout: 60000
+  jackson:
+    time-zone: "Asia/Taipei"
 
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
     driver-class-name: ${DATASOURCE_DRIVER}
+
+  profiles:
+    active: prod
 
 avatarImageFilePath:  E:\my-project\my-project-backend\src\main\resources\static\image\userAvatar\
