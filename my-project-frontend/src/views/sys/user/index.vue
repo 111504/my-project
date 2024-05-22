@@ -1,14 +1,18 @@
 <template>
   <div class="app-container">
-
-
     <el-row :gutter="20" class="header">
       <el-col :span="7">
-        <el-input class="search_input" placeholder="请输入用户名..." v-model="queryForm.query" clearable ></el-input>
+        <el-input
+            class="search_input"
+            placeholder="請輸入入用戶姓名..."
+            v-model="queryForm.query"
+            clearable
+            aria-label="請輸入入用戶姓名..."
+        ></el-input>
       </el-col>
       <el-button type="primary" :icon="Search" @click="initUserList">搜索</el-button>
-      <el-button type="success" :icon="DocumentAdd" @click="handleDialogValue()" v-if="store.HAS_AUTH('system:user:add')">新增</el-button>
-      <el-popconfirm title="您確定要批量刪除嗎？" @confirm="handleDelete(null)">
+      <el-button type="success" :icon="DocumentAdd" @click="handleDialogValue(-1)" v-if="store.HAS_AUTH('system:user:add')">新增</el-button>
+      <el-popconfirm title="您確定要多重刪除嗎？" @confirm="handleDelete(null)">
         <template #reference>
           <el-button type="danger" :disabled="delBtnStatus" :icon="Delete" v-if="store.HAS_AUTH('system:user:delete')">批量删除</el-button>
         </template>
@@ -45,15 +49,15 @@
       <el-table-column prop="action" label="操作" width="400" fixed="right" align="center">
         <template v-slot="scope"  >
           <el-button  type="primary" :icon="Tools"  @click="handleRoleDialogValue(scope.row.id,scope.row.sysRoleList)" v-if="store.HAS_AUTH('system:user:role')">分配</el-button>
-          <el-button v-if="scope.row.username!='admin' && store.HAS_AUTH('system:user:edit')" type="primary" :icon="Edit" @click="handleDialogValue(scope.row.id)" >修改</el-button>
+          <el-button v-if="scope.row.username!=='admin' && store.HAS_AUTH('system:user:edit')" type="primary" :icon="Edit" @click="handleDialogValue(scope.row.id)" >修改</el-button>
 
-          <el-popconfirm  v-if="scope.row.username!='admin'" title="您确定要对这个用户重置密码吗？" @confirm="handleResetPassword(scope.row.id)">
+          <el-popconfirm v-if="scope.row.username!=='admin'" title="您確定要重製這用戶密碼嗎?" @confirm="handleResetPassword(scope.row.id)">
             <template #reference>
               <el-button  type="warning" :icon="RefreshRight" v-if="store.HAS_AUTH('system:user:resetPwd')">重置密码</el-button>
             </template>
           </el-popconfirm>
 
-          <el-popconfirm  v-if="scope.row.username!='admin'" title="您确定要删除这条记录吗？" @confirm="handleDelete(scope.row.id)">
+          <el-popconfirm  v-if="scope.row.username!='admin'" title="您確定要刪除這用戶?" @confirm="handleDelete(scope.row.id)">
             <template #reference>
               <el-button  type="danger" :icon="Delete" v-if="store.HAS_AUTH('system:user:delete')"/>
             </template>
@@ -133,22 +137,18 @@ const handleSelectionChange = (selection)=>{
 }
 
 
-const handleRoleDialogValue = (id,roleList)=>{
-  console.log("handleRoleDialogValue id="+id)
-  id.value=id;
+const handleRoleDialogValue = (userId,roleList)=>{
+  console.log("handleRoleDialogValue id="+userId)
+  id.value=userId;
   sysRoleList.value=roleList;
   roleDialogVisible.value=true
 }
 
-const handleDialogValue=(id)=>{
-  if(id){
-    console.log("用户修改 id="+id)
-    id.value=id;
+const handleDialogValue=(userId)=>{
+  id.value=userId;
+  if(userId!==-1){
     dialogTitle.value="用户修改"
   }else{
-
-    id.value=-1;
-    console.log("用户添加 id.value="+id.value)
     dialogTitle.value="用户添加"
   }
   dialogVisible.value=true
@@ -171,29 +171,19 @@ const handleResetPassword = async (id)=>{
 }
 
 const handleDelete=async (id)=>{
-  var ids = []
+  let ids = []
   //單選刪除
   if(id){
+
     ids.push(id)
   }else{
     //多選刪除
     multipleSelection.value.forEach(row=>{
-      if(row.id !=1 ) ids.push(row.id)
+      if(row.id !=1 )
+        ids.push(row.id)
     })
   }
-  // const res=await requestUtil.post("sys/user/delete",ids)
-  // if(res.data.status==200){
-  //   ElMessage({
-  //     type: 'success',
-  //     message: res.data.data
-  //   })
-  //   initUserList();
-  // }else{
-  //   ElMessage({
-  //     type: 'error',
-  //     message: res.data.data,
-  //   })
-  // }
+
   await post("api/user/delete",ids,(response)=>{
     ElMessage.success("刪除成功！")
     initUserList();

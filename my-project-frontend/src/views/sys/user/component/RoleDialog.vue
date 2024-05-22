@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-      model-value="roleDialogVisible"
+      :model-value="roleDialogVisible"
       title="分配角色"
       width="30%"
       @close="handleClose"
@@ -10,11 +10,9 @@
         :model="form"
         label-width="100px"
     >
-
       <el-checkbox-group v-model="form.checkedRoles">
         <el-checkbox v-for="role in form.roleList" :id="role.id.toString()" :key="role.id" :label="role.id"  name="checkedRoles" >{{role.name}}</el-checkbox>
       </el-checkbox-group>
-
     </el-form>
     <template #footer>
       <span class="dialog-footer">
@@ -53,26 +51,16 @@ const props=defineProps(
       }
     }
 )
-
-
 const form=ref({
   id:-1,
   roleList:[],
   checkedRoles:[],
 })
-
-
 const formRef=ref(null)
-
-// const initFormData=async(id)=>{
-//   const res=await requestUtil.get("sys/role/listAll");
-//   form.value.roleList=res.data.data
-//   form.value.id=id;
-// }
 
 const initFormData=async(id)=>{
   await get("sys/role/listAll",(response)=>{
-    ElMessage.success("初始化成功")
+    ElMessage.success("初始化用戶資訊成功")
     // console.log(Object.prototype.toString.call(response.data.roleList))
     console.log( response)
      form.value.roleList=response.roleList;

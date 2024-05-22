@@ -1,11 +1,11 @@
 #上線環境
-datasource:
-  url: ${DATASOURCE_URL}
-  username: ${DATASOURCE_USERNAME}
+spring:
+ datasource:
+  url: ${DATASOURCE_EC2_URL}
+  username: ${DATASOURCE_EC2_USERNAME}
   password: ${DATASOURCE_EC2_PASSWORD}
   driver-class-name: ${DATASOURCE_DRIVER}
 
 server:
   port: 8080
 
-avatarImageFilePath: c:\\Src\\userAvatar\\

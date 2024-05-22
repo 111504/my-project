@@ -34,20 +34,6 @@ const form=ref({
   email:"",
   remark:""
 })
-
-// const checkUsername = async (rule, value, callback) => {
-//   if(form.value.id==-1){
-//     const res=await requestUtil.post("sys/user/checkUserName",{username:form.value.username});
-//     if (res.data.code==500) {
-//       callback(new Error("用户名已存在！"));
-//     } else {
-//       callback();
-//     }
-//   }else{
-//     callback();
-//   }
-//
-// }
 function postCheckUsername(url, data, header) {
   // 返回一个 Promise 对象
   return new Promise((resolve, reject) => {
@@ -69,29 +55,22 @@ function postCheckUsername(url, data, header) {
         });
   });
 }
-//檢查使用者姓名是否重複
-// const checkUsername=(rule, value, callback)=>{
-//   console.log("新增用戶觸發，先剪成用戶名稱是否重複")
-//   if(form.value.id==-1){
-//      internalPost("api/user/checkUserName",{username:form.value.username},accessHeader(),(reponse)=>{
-//        ElMessage.success(reponse)
-//      })
-//   }
-// }
+/*
+* 檢查用戶名稱是否重複
+* */
 const checkUsername = async (rule, value, callback) => {
-  console.log("新增用户触发，先检查用户名是否重复");
   if (form.value.id === -1 && value) {
     try {
       // 等待 internalPost 完成
       await postCheckUsername("api/user/checkUserName", {username:form.value.username}, accessHeader());
-      // 如果没有错误，则调用 callback() 表示验证通过
+      // 如果没有錯誤，则調用 callback() 表示驗證通過
       callback();
     } catch (error) {
-      // 如果有错误（用户名重复或网络错误等），调用 callback(error)
-      callback(new Error("用户名重复或检查失败"));
+      // 如果有错误（用户名重复或網路錯誤），調用 callback(error)
+      callback(new Error("檢查用戶名稱失敗"));
     }
   } else {
-    // 如果不需要检查（例如，id 不为 -1），直接调用 callback() 通过验证
+    // 如果不需要检查（例如，id 不为 -1），直接调用 callback() 通過驗證
     callback();
   }
 };
@@ -105,15 +84,11 @@ const rules=ref({
 })
 
 const formRef=ref(null)
-// const initFormData=async(id)=>{
-//   const res=await requestUtil.get("sys/user/"+id);
-//   form.value=res.data.sysUser;
-// }
 
-//在用戶修該資料前，先顯示用戶內容
+//傳入用戶id，回傳用戶內容
 const initFormData=async(id)=>{
   await get("api/user/"+id,(response)=>{
-    ElMessage.success("初始化成功")
+    ElMessage.success("初始化用戶資訊成功")
     console.log(response)
     form.value=response.sysUser;
   })

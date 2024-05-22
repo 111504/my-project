@@ -3,7 +3,7 @@
 <!--    &lt;!&ndash; github角标 &ndash;&gt;-->
 <!--    <github-corner class="github-corner" />-->
 
-    <el-card shadow="never" class="border border-1  rounded">
+    <el-card shadow="never" class="border border-2  rounded ">
       <el-row justify="space-between">
         <el-col :span="12" :xs="24">
           <div class="left-bar">

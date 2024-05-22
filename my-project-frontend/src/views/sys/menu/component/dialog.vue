@@ -46,7 +46,7 @@
         <el-input v-model="form.perms" />
       </el-form-item>
 
-      <el-form-item label="組件路徑" prop="component">
+      <el-form-item label="組件名稱" prop="component">
         <el-input v-model="form.component" />
       </el-form-item>
 

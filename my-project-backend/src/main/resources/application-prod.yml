@@ -1,11 +1,11 @@
-#????
-datasource:
-  url: ${DATASOURCE_URL}
-  username: ${DATASOURCE_USERNAME}
-  password: ${DATASOURCE_PASSWORD}
-  driver-class-name: ${DATASOURCE_DRIVER}
+#筆電環境
+spring:
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: ${DATASOURCE_DRIVER}
 
 server:
   port: 8080
 
-avatarImageFilePath: D:\\GitHub_P\\my-project\\my-project-backend\\src\\main\\resources\\static\\image\\userAvatar\\

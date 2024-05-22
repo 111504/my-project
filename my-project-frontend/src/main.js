@@ -4,7 +4,7 @@ import App from './App.vue'
 import { createPinia } from 'pinia'
 import router from "@/router";
 import 'element-plus/dist/index.css'
-import ElementPlus  from 'element-plus';
+// import ElementPlus  from 'element-plus';
 import axios from "axios";
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
@@ -15,19 +15,21 @@ import "./router/permission.js"
 import {zhTw} from "element-plus/es/locale/index";
 // Import our custom CSS
 import '../src/scss/styles.scss'
+const apiUrl=import.meta.env.VITE_APP_API_URL
 // Import all of Bootstrap's JS
-import * as bootstrap from 'bootstrap'
+// import * as bootstrap from 'bootstrap'
 
-axios.defaults.baseURL="http://localhost:8080"
+axios.defaults.baseURL=apiUrl;
 const pinia = createPinia()
 const app = createApp(App)
 app.use(pinia)
-app.use(ElementPlus,{
-    locale:zhTw,
-})
+// app.use(ElementPlus,{
+//     locale:zhTw,
+// })
 
 
-
+// 配置国际化语言包
+app.config.globalProperties.$ELEMENT = { locale: zhTw };
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component)

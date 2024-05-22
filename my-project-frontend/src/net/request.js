@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // axios.defaults.baseURL="http://localhost:8080"
-let baseURL="http://localhost:8080/";
+const apiUrl=import.meta.env.VITE_APP_API_URL
 // 创建axios實例
 // const httpService = axios.create({
 //     // url前缀-'http:xxx.xxx'
@@ -30,7 +30,7 @@ let baseURL="http://localhost:8080/";
 // }
 
  function getServerUrl(){
-    return baseURL;
+    return apiUrl;
 }
 
 export  {

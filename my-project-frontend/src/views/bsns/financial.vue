@@ -46,8 +46,8 @@
         @current-change="handleCurrentChange"
     />
   </div>
-<!--  <Dialog v-model="dialogVisible" :dialogVisible="dialogVisible" :id="id" :dialogTitle="dialogTitle" @initUserList="initUserList"/>-->
-<!--  <RoleDialog v-model="roleDialogVisible" :sysRoleList="sysRoleList" :roleDialogVisible="roleDialogVisible" :id="id" @initUserList="initUserList"></RoleDialog>-->
+  <!--  <Dialog v-model="dialogVisible" :dialogVisible="dialogVisible" :id="id" :dialogTitle="dialogTitle" @initUserList="initUserList"/>-->
+  <!--  <RoleDialog v-model="roleDialogVisible" :sysRoleList="sysRoleList" :roleDialogVisible="roleDialogVisible" :id="id" @initUserList="initUserList"></RoleDialog>-->
 </template>
 
 <script setup>
@@ -77,7 +77,7 @@ const dialogTitle=ref('')
 const id=ref(-1)
 
 
- tableData = [
+tableData = [
   {
     username: '林大張',
     department: '人事部門',
@@ -85,139 +85,139 @@ const id=ref(-1)
     boss:'張美蘭',
     time:'2016-05-03'
   },
-   {
-     username: '李小華',
-     department: '銷售部門',
-     level: '中級員工',
-     boss: '王志強',
-     time: '2017-07-15'
-   },
-   {
-     username: '王小明',
-     department: '研發部門',
-     level: '資深員工',
-     boss: '鄭麗華',
-     time: '2018-08-20'
-   },
-   {
-     username: '張三豐',
-     department: '市場部門',
-     level: '新進員工',
-     boss: '王志強',
-     time: '2019-09-10'
-   },
-   {
-     username: '劉小龍',
-     department: '人事部門',
-     level: '中級員工',
-     boss: '張美蘭',
-     time: '2020-10-02'
-   },
-   {
-     username: '陳麗君',
-     department: '銷售部門',
-     level: '資深員工',
-     boss: '王志強',
-     time: '2021-11-17'
-   },
-   {
-     username: '黃美珠',
-     department: '研發部門',
-     level: '新進員工',
-     boss: '鄭麗華',
-     time: '2022-12-01'
-   },
-   {
-     username: '馮海生',
-     department: '市場部門',
-     level: '中級員工',
-     boss: '王志強',
-     time: '2023-01-10'
-   },
-   {
-     username: '楊子儀',
-     department: '人事部門',
-     level: '資深員工',
-     boss: '張美蘭',
-     time: '2024-02-14'
-   },
-   {
-     username: '林珊珊',
-     department: '銷售部門',
-     level: '新進員工',
-     boss: '王志強',
-     time: '2025-03-20'
-   },
-   {
-     username: '林大張',
-     department: '人事部門',
-     level: '新進員工',
-     boss: '張美蘭',
-     time: '2016-05-03'
-   },
-   {
-     username: '李小華',
-     department: '銷售部門',
-     level: '中級員工',
-     boss: '王志強',
-     time: '2017-07-15'
-   },
-   {
-     username: '王小明',
-     department: '研發部門',
-     level: '資深員工',
-     boss: '鄭麗華',
-     time: '2018-08-20'
-   },
-   {
-     username: '張三豐',
-     department: '市場部門',
-     level: '新進員工',
-     boss: '王志強',
-     time: '2019-09-10'
-   },
-   {
-     username: '劉小龍',
-     department: '人事部門',
-     level: '中級員工',
-     boss: '張美蘭',
-     time: '2020-10-02'
-   },
-   {
-     username: '陳麗君',
-     department: '銷售部門',
-     level: '資深員工',
-     boss: '王志強',
-     time: '2021-11-17'
-   },
-   {
-     username: '黃美珠',
-     department: '研發部門',
-     level: '新進員工',
-     boss: '鄭麗華',
-     time: '2022-12-01'
-   },
-   {
-     username: '馮海生',
-     department: '市場部門',
-     level: '中級員工',
-     boss: '王志強',
-     time: '2023-01-10'
-   },
-   {
-     username: '楊子儀',
-     department: '人事部門',
-     level: '資深員工',
-     boss: '張美蘭',
-     time: '2024-02-14'
-   },
-   {
-     username: '林珊珊',
-     department: '銷售部門',
-     level: '新進員工',
-     boss: '王志強',
-     time: '2025-03-20'
-   }
+  {
+    username: '李小華',
+    department: '銷售部門',
+    level: '中級員工',
+    boss: '王志強',
+    time: '2017-07-15'
+  },
+  {
+    username: '王小明',
+    department: '研發部門',
+    level: '資深員工',
+    boss: '鄭麗華',
+    time: '2018-08-20'
+  },
+  {
+    username: '張三豐',
+    department: '市場部門',
+    level: '新進員工',
+    boss: '王志強',
+    time: '2019-09-10'
+  },
+  {
+    username: '劉小龍',
+    department: '人事部門',
+    level: '中級員工',
+    boss: '張美蘭',
+    time: '2020-10-02'
+  },
+  {
+    username: '陳麗君',
+    department: '銷售部門',
+    level: '資深員工',
+    boss: '王志強',
+    time: '2021-11-17'
+  },
+  {
+    username: '黃美珠',
+    department: '研發部門',
+    level: '新進員工',
+    boss: '鄭麗華',
+    time: '2022-12-01'
+  },
+  {
+    username: '馮海生',
+    department: '市場部門',
+    level: '中級員工',
+    boss: '王志強',
+    time: '2023-01-10'
+  },
+  {
+    username: '楊子儀',
+    department: '人事部門',
+    level: '資深員工',
+    boss: '張美蘭',
+    time: '2024-02-14'
+  },
+  {
+    username: '林珊珊',
+    department: '銷售部門',
+    level: '新進員工',
+    boss: '王志強',
+    time: '2025-03-20'
+  },
+  {
+    username: '林大張',
+    department: '人事部門',
+    level: '新進員工',
+    boss: '張美蘭',
+    time: '2016-05-03'
+  },
+  {
+    username: '李小華',
+    department: '銷售部門',
+    level: '中級員工',
+    boss: '王志強',
+    time: '2017-07-15'
+  },
+  {
+    username: '王小明',
+    department: '研發部門',
+    level: '資深員工',
+    boss: '鄭麗華',
+    time: '2018-08-20'
+  },
+  {
+    username: '張三豐',
+    department: '市場部門',
+    level: '新進員工',
+    boss: '王志強',
+    time: '2019-09-10'
+  },
+  {
+    username: '劉小龍',
+    department: '人事部門',
+    level: '中級員工',
+    boss: '張美蘭',
+    time: '2020-10-02'
+  },
+  {
+    username: '陳麗君',
+    department: '銷售部門',
+    level: '資深員工',
+    boss: '王志強',
+    time: '2021-11-17'
+  },
+  {
+    username: '黃美珠',
+    department: '研發部門',
+    level: '新進員工',
+    boss: '鄭麗華',
+    time: '2022-12-01'
+  },
+  {
+    username: '馮海生',
+    department: '市場部門',
+    level: '中級員工',
+    boss: '王志強',
+    time: '2023-01-10'
+  },
+  {
+    username: '楊子儀',
+    department: '人事部門',
+    level: '資深員工',
+    boss: '張美蘭',
+    time: '2024-02-14'
+  },
+  {
+    username: '林珊珊',
+    department: '銷售部門',
+    level: '新進員工',
+    boss: '王志強',
+    time: '2025-03-20'
+  }
 ]
 
 
@@ -238,12 +238,12 @@ const handleSizeChange=(pageSize)=>{
   console.log("pageSize",pageSize);
   queryForm.value.pageNum = 1
   queryForm.value.pageSize=pageSize
- initUserList()
+  initUserList()
 }
 
 const handleCurrentChange = (pageNum)=>{
   queryForm.value.pageNum = pageNum
- initUserList()
+  initUserList()
 }
 // const handleSelectionChange = (selection)=>{
 //   // 有选择项才有批量删除

@@ -71,6 +71,7 @@ public class SecurityConfiguration {
                         //對於匹配 /api/auth/** 這個路徑模式的所有請求，都允許所有用戶（包括未經認證的用戶）訪問。
                         .requestMatchers("/api/auth/**").permitAll()
                                         .requestMatchers("/api/picture/**").permitAll()
+                                        .requestMatchers("/api/android/**").permitAll()
                                 //該api限定只能有身份為admin才能訪問
                                 .requestMatchers("/api/test/admin").hasRole("admin")
                                 .requestMatchers("/api/test/hello").hasRole("user")

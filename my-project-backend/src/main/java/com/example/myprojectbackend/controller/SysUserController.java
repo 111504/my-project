@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Validated
 @RestController
@@ -49,6 +50,11 @@ public class SysUserController {
     @Value("${avatarImageFilePath}")
     private String avatarImageFilePath;
 
+    /*
+    這RestfulApi
+    @param pageBean: 這是一個物件回傳訊息包括PageNum，PageSize，代表資料的總頁數
+
+    */
     @PostMapping("/list")
     public String listUser(@RequestBody PageBean pageBean) {
         String query=pageBean.getQuery().trim();
@@ -157,14 +163,39 @@ public class SysUserController {
     @PostMapping("/delete")
     @PreAuthorize("hasAuthority('system:user:delete')")
     public RestBean<Void> delete(@RequestBody Long[] ids){
-        //刪除用戶表  用戶角色關聯表
-        if(sysUserService.removeByIds(Arrays.asList(ids))&&sysUserRoleService.remove(new QueryWrapper<SysUserRole>().in("user_id",  ids))){
-            return RestBean.success();
-        }
-        else{
-            return RestBean.failure(500, "刪除失敗");
+        // 將陣列轉換為 List
+        List<Long> idList = Arrays.asList(ids);
+
+        // 删除用户表中的用户
+        boolean userRemoved = sysUserService.removeByIds(idList);
+
+
+
+        // 获取 `user_id` 字段中实际存在的 `ids` 值
+        List<Long> existingUserIds = sysUserRoleService
+                .list(new QueryWrapper<SysUserRole>().select("user_id").in("user_id", idList))
+                .stream()
+                .map(SysUserRole::getUserId)
+                .toList();
+
+        if (!existingUserIds.isEmpty()) {
+            // 列表非空，表示有符合条件的 user_id，执行删除操作
+            boolean userRoleRemoved = sysUserRoleService.remove(new QueryWrapper<SysUserRole>().in("user_id", existingUserIds));
+            if (userRoleRemoved) {
+                // 删除成功，执行后续操作
+
+            } else {
+                // 删除失败，返回错误信息
+                return RestBean.failure(500, "刪除用戶關聯角色失敗");
+            }
         }
 
+        // 返回成功或失败结果
+        if (userRemoved ) {
+            return RestBean.success();
+        } else {
+            return RestBean.failure(500, "删除角色失败");
+        }
     }
 
 /*重置密碼*/

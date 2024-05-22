@@ -91,7 +91,6 @@ public class JwtUtils {
     }
 
     private boolean isInvalidToken(String uuid){
-//        return Boolean.TRUE.equals(template.hasKey(Const.JWT_BLACK_LIST+uuid));
         try {
             return Boolean.TRUE.equals(template.hasKey(Const.JWT_BLACK_LIST + uuid));
         } catch (RedisConnectionFailureException e) {
@@ -139,29 +138,16 @@ public class JwtUtils {
         Date dateTimeNow=Date
                 .from(localDateTime.atZone(ZoneId.systemDefault())
                 .toInstant());
-
-        System.out.println("createJwt  使用者uuid= "+uuid);
-        System.out.println("createJwt  使用者名稱= "+username);
-        System.out.println("createJwt  當前時間="+dateTimeNow);
-        System.out.println("createJwt 不重複的JwtUuid="+tokenId);
-        System.out.println("createJwt  過期時間="+expireTime());
- //       System.out.println("createJwt  用戶身份="+role);
-//        System.out.println("createJwt  用戶授權="+details.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
-
         return JWT.create()
                 //賦予使用者的uuid
                 .withClaim("uuid",uuid)
                 //賦予每一個jwt 不重複的id值
                 .withJWTId(String.valueOf(tokenId))
                 .withClaim("name",username)
-//                //屬性 authorities
-//                .withClaim("authorities",details.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 //jwt過期時間
                 .withExpiresAt(expireTime())
                  //簽發時間
                 .withIssuedAt(dateTimeNow)
-                 //使用者身份
-           //     .withClaim("role", role)
                 //獲取jwt的加密演算法
                 .sign(algorithm);
     }
@@ -177,13 +163,9 @@ public class JwtUtils {
 
     public UserDetails toUser(DecodedJWT jwt){
         Map<String , Claim> claims=jwt.getClaims();
-
-      //  String rolesStr[] = claims.get("role").asString().split(",");
-
         return User
                 .withUsername(claims.get("name").asString())
                 .password("******")
-         //       .roles(rolesStr)
                 .build();
     }
 

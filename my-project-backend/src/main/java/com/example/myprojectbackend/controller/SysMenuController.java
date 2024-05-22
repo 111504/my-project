@@ -78,6 +78,8 @@ public class SysMenuController {
 
             sysMenuService.save(sysMenu);
         } else {
+            String modifiedString=StringUtil.modifyString(sysMenu.getComponent(),sysMenu.getMenuType());
+            sysMenu.setPath(modifiedString);
             sysMenu.setUpdateTime(new Date());
             sysMenuService.updateById(sysMenu);
         }

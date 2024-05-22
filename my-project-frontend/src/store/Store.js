@@ -1,4 +1,5 @@
 import {defineStore} from "pinia";
+import {ElMessage} from "element-plus";
 
 
 export const useMenuStore = defineStore("menuStore",{
@@ -122,14 +123,14 @@ export const useMenuStore = defineStore("menuStore",{
         },
         HAS_AUTH(needAuth){
             const authObjList  = this.GET_AUTH();
-            // const authStrList = []
-            // authObjList.forEach(authObj=>authStrList.push(authObj.authority))
             const authStrList = authObjList.split(',').map(permission => permission.trim());
-          //  console.log(authStrList)
             if(authStrList.includes(needAuth)){
                 return true
             }
-            return false
+            else {
+                ElMessage.warning("沒有權限")
+                return false
+            }
         }
     },
 })

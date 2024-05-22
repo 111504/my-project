@@ -142,12 +142,19 @@ public class StringUtil {
                 }
 
             case "C":
+
+
+
+
                 if (input.endsWith("index")) {
                     // 去除 "index" 並在前面加上 "/"
                     input = input.substring(0, input.length() - "/index".length());
                 }
-
-                return "/" + input;
+                //如果忘記加上/
+                if (!(input.startsWith("/"))) {
+                    input="/" + input;
+                }
+                return  input;
 
         }
        return  "";

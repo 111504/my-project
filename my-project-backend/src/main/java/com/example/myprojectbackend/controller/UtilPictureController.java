@@ -12,7 +12,7 @@ import java.nio.file.Files;
 
 
 @RestController
-@RequestMapping("/api/picture")
+@RequestMapping("api/picture")
 public class UtilPictureController {
 
 

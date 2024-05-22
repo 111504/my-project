@@ -3,7 +3,7 @@
 </script>
 
 <template>
-post
+人事部門
 </template>
 
 <style scoped>

@@ -8,6 +8,7 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import * as path from "path";
+import {visualizer} from "rollup-plugin-visualizer";
 // https://vitejs.dev/config/
 
 
@@ -23,6 +24,10 @@ export default defineConfig({
     createSvgIconsPlugin({
       iconDirs: [resolve(process.cwd(), 'src/assets/svg')],
       symbolId: 'icon-[dir]-[name]',
+    }),
+    visualizer({
+      filename: './dist/stats.html', // 输出报告文件的路径
+      open: true, // 自动打开报告
     }),
   ],
   css:{

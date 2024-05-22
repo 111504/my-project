@@ -1,11 +1,14 @@
 <script setup>
-  const url='../src/img/loginPage.png';
+//  import imageUrl from '../../public/loginPage.png'
+  // const url=require('./assets/loginPage.png');
 </script>
 
 <template>
 <div class="welcome-container" >
   <div style="flex: 1;background-color: #181818">
-    <el-image style="width: 100%; height: 100%" :src="url"  fit="cover" />
+    <el-image style="width: 100%; height: 100%"  src="/loginPage.png"  fit="cover" />
+
+<!--    <img src="~@/assets/loginPage.png">-->
   </div>
   <div class="welcome-title">
     <div style="font-size: 30px;font-weight: bold">權限系統專題實作</div>
