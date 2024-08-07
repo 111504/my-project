@@ -60,7 +60,7 @@
         <el-card shadow="never">
           <template #header>
             <div class="d-flex items-center justify-content-between">
-              <span class="text-secondary">訪客數</span>
+              <span class="text-secondary">碳排</span>
               <el-tag type="success" class="fs-6">日</el-tag>
             </div>
           </template>
@@ -75,7 +75,7 @@
           <div
               class="d-flex items-center justify-content-between mt-5 text-sm text-secondary"
           >
-            <span> 總訪客數 </span>
+            <span> 總排放量 </span>
             <span> {{visitCountAmount().total}} </span>
           </div>
         </el-card>
@@ -86,7 +86,7 @@
         <el-card shadow="never">
           <template #header>
             <div class="d-flex items-center justify-content-between">
-              <span class="text-secondary">IP數</span>
+              <span class="text-secondary">每月用電量</span>
               <el-tag type="success" class="fs-6">日</el-tag>
             </div>
           </template>
@@ -101,7 +101,7 @@
           <div
               class="d-flex items-center justify-content-between mt-5 text-sm text-secondary"
           >
-            <span> 總ip數 </span>
+            <span> 總度數 </span>
             <span>  {{dauCountAmount().total}} </span>
           </div>
         </el-card>
@@ -111,7 +111,7 @@
         <el-card shadow="never">
           <template #header>
             <div class="d-flex items-center justify-content-between">
-              <span class="text-secondary">銷售額</span>
+              <span class="text-secondary">每日耗電量</span>
               <el-tag class="fs-6">月</el-tag>
             </div>
           </template>
@@ -126,7 +126,7 @@
           <div
               class="d-flex items-center justify-content-between mt-5 text-sm text-secondary"
           >
-            <span> 總銷售額 </span>
+            <span> 度數 </span>
             <span> {{roundedAmount().total}} </span>
           </div>
         </el-card>
@@ -137,7 +137,7 @@
         <el-card shadow="never">
           <template #header>
             <div class="d-flex items-center justify-content-between">
-              <span class="text-secondary">訂單量</span>
+              <span class="text-secondary">總瓦數</span>
               <el-tag type="danger" class="fs-6">季</el-tag>
             </div>
           </template>
@@ -152,47 +152,40 @@
           <div
               class="d-flex items-center justify-content-between mt-5 text-sm text-secondary"
           >
-            <span> 總訂單量 </span>
+            <span> 瓦 </span>
             <span>  {{orderCountAmount().total}}</span>
           </div>
         </el-card>
       </el-col>
     </el-row>
 
-<!--     Echarts 图表 -->
-<!--    <el-row :gutter="10" class="mt-3">-->
-<!--      <el-col :sm="24" :lg="8" class="mb-2">-->
-<!--        <BarChart-->
-<!--            id="barChart"-->
-<!--            height="400px"-->
-<!--            width="100%"-->
-<!--            class="bg-[var(&#45;&#45;el-bg-color-overlay)]"-->
-<!--        />-->
-<!--      </el-col>-->
 
-<!--      <el-col :xs="24" :sm="12" :lg="8" class="mb-2">-->
-<!--        <PieChart-->
-<!--            id="pieChart"-->
-<!--            height="400px"-->
-<!--            width="100%"-->
-<!--            class="bg-[var(&#45;&#45;el-bg-color-overlay)]"-->
-<!--        />-->
-<!--      </el-col>-->
+    <el-row :gutter="10" class="mt-3">
+      <el-col :xs="12" :sm="12" :lg="6" class="mb-2">
+        <BarChart/>
 
-<!--      <el-col :xs="24" :sm="12" :lg="8" class="mb-2">-->
-<!--        <RadarChart-->
-<!--            id="radarChart"-->
-<!--            height="400px"-->
-<!--            width="100%"-->
-<!--            class="bg-[var(&#45;&#45;el-bg-color-overlay)]"-->
-<!--        />-->
-<!--      </el-col>-->
-<!--    </el-row>-->
+      </el-col>
+
+      <el-col :xs="12" :sm="12" :lg="6" class="mb-2">
+        <PieChat/>
+
+      </el-col>
+      <el-col :xs="12" :sm="12" :lg="12" class="mb-2">
+        <Line/>
+
+      </el-col>
+
+
+    </el-row>
   </div>
 </template>
 
 <script setup lang="ts">
 import SvgIcon from "@/components/SvgIcon.vue";
+import Line from '@/components/LineChart.vue';
+import BarChart from '@/components/BarChart.vue';
+import PieChat from "@/components/PieChat.vue";
+
 import {TransitionPresets, useTransition} from "@vueuse/core";
 import {computed, ref,reactive} from "vue";
 

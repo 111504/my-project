@@ -43,6 +43,6 @@ spring:
 #    active: ec2
 
 #大頭照 筆電圖片存放路徑
-#avatarImageFilePath: ${LOCATION_OF_LAPTOP}
+avatarImageFilePath: ${LOCATION_OF_LAPTOP}
 #大頭照 桌電存放路徑
-avatarImageFilePath: ${LOCATION_OF_DESKTOP}
+#avatarImageFilePath: ${LOCATION_OF_DESKTOP}
