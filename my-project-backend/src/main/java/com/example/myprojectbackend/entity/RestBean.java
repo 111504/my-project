@@ -6,7 +6,6 @@ import com.alibaba.fastjson2.JSONWriter;
 
 public record RestBean<T>(int code, T data, String message) {
     public static<T> RestBean<T> success(T data){
-
         return new RestBean<>( 200,data,"請求成功");
     }
     public static<T> RestBean<T> success(T data,String message){

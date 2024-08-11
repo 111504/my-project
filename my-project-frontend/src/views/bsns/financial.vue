@@ -1,347 +1,219 @@
 <template>
-  <div class="app-container">
-
-
-    <el-row :gutter="20" class="header">
-      <el-col :span="7">
-        <!--        <el-input class="search_input" placeholder="请输入用户名..." v-model="queryForm.query" clearable ></el-input>-->
-        <el-input
-            class="search_input"
-            placeholder="請輸入入用戶姓名..."
-            v-model="queryForm.query"
-            clearable
-            aria-label="請輸入入用戶姓名..."
-        ></el-input>
-      </el-col>
-      <el-button type="primary" :icon="Search" @click="initUserList">搜索</el-button>
-      <el-button type="success" :icon="DocumentAdd" @click="handleDialogValue()" v-if="store.HAS_AUTH('system:user:add')">新增</el-button>
-      <el-popconfirm title="您確定要多重刪除嗎？" @confirm="handleDelete(null)">
-        <template #reference>
-          <el-button type="danger" :disabled="delBtnStatus" :icon="Delete" v-if="store.HAS_AUTH('system:user:delete')">批量删除</el-button>
-        </template>
-      </el-popconfirm>
-    </el-row>
-
-
-    <el-table :data="tableData"   stripe  style="width: 100%" >
-      <el-table-column type="selection" width="55" />
-      <el-table-column  fixed  prop="username" label="姓名" width="100" align="center"/>
-      <el-table-column prop="department" label="部門" width="200" align="center"/>
-      <el-table-column prop="level" label="職等" width="200" align="center"/>
-      <el-table-column prop="boss" label="主管" width="120" align="center"/>
-      <el-table-column prop="time" label="入職時間" width="200" align="center" />
-
-
-    </el-table>
+  <div>
+    <h1>用電量報表</h1>
+    <table class="report-table" ref="reportTable">
+      <thead>
+      <tr>
+        <th>月份</th>
+        <th>尖峰電量</th>
+        <th>半尖峰電量</th>
+        <th>離峰電量</th>
+        <th>總用電量</th>
+        <th>描述/說明</th>
+        <th>碳排放量</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="(item, index) in reportData" :key="index">
+        <td>{{ item.month }}</td>
+        <td>{{ item.peak }}</td>
+        <td>{{ item.midPeak }}</td>
+        <td>{{ item.offPeak }}</td>
+        <td>{{ item.total }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.carbonEmission }}</td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="chart-container" ref="chartContainer">
+      <canvas ref="chartElement"></canvas>
+    </div>
+    <div ref="buttonsContainer" class="buttons-container">
+      <button @click="switchData" style="margin-bottom: 20px">切換數據</button>
+      <button @click="exportPDF" style="margin-bottom: 20px">匯出 PDF</button>
+    </div>
   </div>
-
-  <div class="demo-pagination-block">
-    <el-pagination
-        v-model:current-page="queryForm.pageNum"
-        v-model:page-size="queryForm.pageSize"
-        :page-sizes="[5,10,30,40]"
-        layout="total, sizes, prev, pager, next jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-    />
-  </div>
-  <!--  <Dialog v-model="dialogVisible" :dialogVisible="dialogVisible" :id="id" :dialogTitle="dialogTitle" @initUserList="initUserList"/>-->
-  <!--  <RoleDialog v-model="roleDialogVisible" :sysRoleList="sysRoleList" :roleDialogVisible="roleDialogVisible" :id="id" @initUserList="initUserList"></RoleDialog>-->
 </template>
 
 <script setup>
-// import Dialog from "./component/Dialog.vue"
-// import RoleDialog from "./component/RoleDialog.vue"
+import { ref, onMounted, nextTick } from 'vue';
+import Chart from 'chart.js/auto';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
-import {ref} from "vue"
-import {Delete, DocumentAdd, Edit, RefreshRight, Search, Tools} from "@element-plus/icons-vue";
-import {ElMessage,ElNotification} from 'element-plus'
-import {useMenuStore} from "@/store/Store.js";
-import {get, post} from "@/net";
+// 假數據
+const fakeData = [
+  { month: 'January', peak: 0, midPeak: 256124, offPeak: 0, total: 256124, description: '電費記錄無無註尖峰或離峰', carbonEmission: 128574.248 },
+  { month: 'February', peak: 0, midPeak: 220391, offPeak: 0, total: 220391, description: '電費記錄無無註尖峰或離峰', carbonEmission: 110636.282 },
+  { month: 'March', peak: 0, midPeak: 278819, offPeak: 0, total: 278819, description: '電費記錄無無註尖峰或離峰', carbonEmission: 139967.138 },
+  { month: 'April', peak: 0, midPeak: 271306, offPeak: 0, total: 271306, description: '電費記錄無無註尖峰或離峰', carbonEmission: 136195.612 },
+  { month: 'May', peak: 0, midPeak: 326821, offPeak: 0, total: 326821, description: '電費記錄無無註尖峰或離峰', carbonEmission: 164064.142 },
+  { month: 'June', peak: 313664, midPeak: 0, offPeak: 0, total: 313664, description: '電費記錄無無註尖峰或離峰', carbonEmission: 157459.842 },
+  { month: 'July', peak: 327087, midPeak: 0, offPeak: 0, total: 327087, description: '電費記錄無無註尖峰或離峰', carbonEmission: 163543.052 },
+  { month: 'August', peak: 348489, midPeak: 0, offPeak: 0, total: 348489, description: '電費記錄無無註尖峰或離峰', carbonEmission: 174941.424 },
+  { month: 'September', peak: 296776, midPeak: 0, offPeak: 0, total: 296776, description: '電費記錄無無註尖峰或離峰', carbonEmission: 148581.552 },
+  // 添加更多假數據...
+];
 
-const store = useMenuStore()
-const delBtnStatus = ref(true) // 删除标识符，true表示不能删除
-const multipleSelection=ref([])  // 批量删除id
-let tableData = ref([])
-const sysRoleList = ref([])
-const queryForm = ref({
-  query: '',
-  pageNum: 1,
-  pageSize: 5
-})
-const total = ref(0)
-const dialogVisible=ref(false)
-const roleDialogVisible=ref(false)
-const dialogTitle=ref('')
-const id=ref(-1)
+const reportData = ref(fakeData);
+const chartElement = ref(null);
+const dataChart = ref(null);
+const reportTable = ref(null);
+const chartContainer = ref(null);
+const buttonsContainer = ref(null);
 
+const updateChart = () => {
+  const labels = reportData.value.map(item => item.month);
+  const data = reportData.value.map(item => item.total);
 
-tableData = [
-  {
-    username: '林大張',
-    department: '人事部門',
-    level: '新進員工',
-    boss:'張美蘭',
-    time:'2016-05-03'
-  },
-  {
-    username: '李小華',
-    department: '銷售部門',
-    level: '中級員工',
-    boss: '王志強',
-    time: '2017-07-15'
-  },
-  {
-    username: '王小明',
-    department: '研發部門',
-    level: '資深員工',
-    boss: '鄭麗華',
-    time: '2018-08-20'
-  },
-  {
-    username: '張三豐',
-    department: '市場部門',
-    level: '新進員工',
-    boss: '王志強',
-    time: '2019-09-10'
-  },
-  {
-    username: '劉小龍',
-    department: '人事部門',
-    level: '中級員工',
-    boss: '張美蘭',
-    time: '2020-10-02'
-  },
-  {
-    username: '陳麗君',
-    department: '銷售部門',
-    level: '資深員工',
-    boss: '王志強',
-    time: '2021-11-17'
-  },
-  {
-    username: '黃美珠',
-    department: '研發部門',
-    level: '新進員工',
-    boss: '鄭麗華',
-    time: '2022-12-01'
-  },
-  {
-    username: '馮海生',
-    department: '市場部門',
-    level: '中級員工',
-    boss: '王志強',
-    time: '2023-01-10'
-  },
-  {
-    username: '楊子儀',
-    department: '人事部門',
-    level: '資深員工',
-    boss: '張美蘭',
-    time: '2024-02-14'
-  },
-  {
-    username: '林珊珊',
-    department: '銷售部門',
-    level: '新進員工',
-    boss: '王志強',
-    time: '2025-03-20'
-  },
-  {
-    username: '林大張',
-    department: '人事部門',
-    level: '新進員工',
-    boss: '張美蘭',
-    time: '2016-05-03'
-  },
-  {
-    username: '李小華',
-    department: '銷售部門',
-    level: '中級員工',
-    boss: '王志強',
-    time: '2017-07-15'
-  },
-  {
-    username: '王小明',
-    department: '研發部門',
-    level: '資深員工',
-    boss: '鄭麗華',
-    time: '2018-08-20'
-  },
-  {
-    username: '張三豐',
-    department: '市場部門',
-    level: '新進員工',
-    boss: '王志強',
-    time: '2019-09-10'
-  },
-  {
-    username: '劉小龍',
-    department: '人事部門',
-    level: '中級員工',
-    boss: '張美蘭',
-    time: '2020-10-02'
-  },
-  {
-    username: '陳麗君',
-    department: '銷售部門',
-    level: '資深員工',
-    boss: '王志強',
-    time: '2021-11-17'
-  },
-  {
-    username: '黃美珠',
-    department: '研發部門',
-    level: '新進員工',
-    boss: '鄭麗華',
-    time: '2022-12-01'
-  },
-  {
-    username: '馮海生',
-    department: '市場部門',
-    level: '中級員工',
-    boss: '王志強',
-    time: '2023-01-10'
-  },
-  {
-    username: '楊子儀',
-    department: '人事部門',
-    level: '資深員工',
-    boss: '張美蘭',
-    time: '2024-02-14'
-  },
-  {
-    username: '林珊珊',
-    department: '銷售部門',
-    level: '新進員工',
-    boss: '王志強',
-    time: '2025-03-20'
+  if (dataChart.value) {
+    dataChart.value.destroy();
   }
-]
 
+  dataChart.value = new Chart(chartElement.value.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '總用電量',
+        data: data,
+        backgroundColor: '#42b983',
+        borderColor: '#42b983',
+        borderWidth: 1,
+        fill: true,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+};
 
+const switchData = () => {
+  reportData.value = reportData.value.map(item => ({
+    ...item,
+    total: Math.floor(Math.random() * 400000)
+  }));
+  updateChart();
+};
 
+const exportPDF = async () => {
+  // 確保 buttonsContainer 已經設置
+  if (!buttonsContainer.value) return;
 
-const  initUserList=async()=>{
-  // post('api/user/list',queryForm.value,(response)=>{
-  //   tableData.value=response.userList;
-  //   total.value=response.total;
-  //   console.log("initUserList",response.userList);
-  //   // console.log("total.value",total.value);
-  // })
-}
-//
-initUserList()
-//
-const handleSizeChange=(pageSize)=>{
-  console.log("pageSize",pageSize);
-  queryForm.value.pageNum = 1
-  queryForm.value.pageSize=pageSize
-  initUserList()
-}
+  // 隱藏按鈕
+  buttonsContainer.value.style.display = 'none';
 
-const handleCurrentChange = (pageNum)=>{
-  queryForm.value.pageNum = pageNum
-  initUserList()
-}
-// const handleSelectionChange = (selection)=>{
-//   // 有选择项才有批量删除
-//   if(selection.length>0) delBtnStatus.value = false;
-//   else delBtnStatus.value = true
-//   multipleSelection.value = selection
-// }
-//
-//
-// const handleRoleDialogValue = (userId,roleList)=>{
-//   console.log("handleRoleDialogValue id="+userId)
-//   id.value=userId;
-//   sysRoleList.value=roleList;
-//   roleDialogVisible.value=true
-// }
-//
-// const handleDialogValue=(userId)=>{
-//   if(userId){
-//     console.log("用户修改 id="+userId)
-//     id.value=userId;
-//     dialogTitle.value="用户修改"
-//   }else{
-//
-//     id.value=-1;
-//     console.log("用户添加 id.value="+id.value)
-//     dialogTitle.value="用户添加"
-//   }
-//   dialogVisible.value=true
-// }
-//
-// const statusChangeHandle = async (row) => {
-//   if (store.HAS_AUTH('system:user:edit')) {
-//     get(`api/user/updateStatus/${row.id}/status/${row.status}`, (response) => {
-//       ElMessage.success("成功更新狀態",response)
-//     })
-//
-//   }
-// }
-//
-// const handleResetPassword = async (id)=>{
-//   await get(`api/user/resetPassword/${id}`,()=>{
-//     ElMessage.success("成功重置密碼")
-//   })
-//
-// }
-//
-// const handleDelete=async (id)=>{
-//   let ids = []
-//   //單選刪除
-//   if(id){
-//
-//     ids.push(id)
-//   }else{
-//     //多選刪除
-//     multipleSelection.value.forEach(row=>{
-//       if(row.id !=1 )
-//         ids.push(row.id)
-//     })
-//   }
-//
-//   await post("api/user/delete",ids,(response)=>{
-//     ElMessage.success("刪除成功！")
-//     initUserList();
-//   })
-//
-//
-// }
+  // 生成 PDF
+  const pdf = new jsPDF('p', 'mm', 'a4');
 
+  // 將表格轉換為圖像
+  const tableCanvas = await html2canvas(reportTable.value, {
+    backgroundColor: null,
+    useCORS: true,
+    scale: 2,
+    willReadFrequently: true
+  });
+  const tableImgData = tableCanvas.toDataURL('image/png');
+
+  // 將圖像添加到 PDF
+  const pdfWidth = pdf.internal.pageSize.getWidth();
+  const pdfHeight = (tableCanvas.height * pdfWidth) / tableCanvas.width;
+  pdf.addImage(tableImgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+  // 將圖表轉換為圖像
+  const chartCanvas = await html2canvas(chartContainer.value, {
+    backgroundColor: null,
+    useCORS: true,
+    scale: 2,
+    willReadFrequently: true
+  });
+  const chartImgData = chartCanvas.toDataURL('image/png');
+
+  // 計算圖表添加位置
+  const chartPdfHeight = (chartCanvas.height * pdfWidth) / chartCanvas.width;
+  pdf.addPage();
+  pdf.addImage(chartImgData, 'PNG', 0, 0, pdfWidth, chartPdfHeight);
+
+  // 保存 PDF
+  pdf.save('report.pdf');
+
+  // 恢復按鈕顯示
+  buttonsContainer.value.style.display = 'block';
+};
+
+onMounted(() => {
+  nextTick(() => {
+    updateChart();
+  });
+});
 </script>
 
-
-
 <style scoped>
-.app-container{
-  width:100%;
-  overflow: hidden;
-}
-
-
-.header{
-  padding-bottom: 16px;
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
+  font-family: 'montserrat', sans-serif;
 }
 
-.demo-pagination-block{
-  float: right;
-  padding: 20px;
-  box-sizing: border-box;
+body {
+  background-color: #fff; /* 設置頁面的背景顏色為白色 */
 }
 
-.search_input{
-
-  border: 1.5px solid cornflowerblue;
-  border-radius: 5px;
-
-  padding-left: 10px;
-  box-sizing: border-box;
+.chart-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 400px;
+  background-color: #fff; /* 設置圖表容器的背景顏色為白色 */
 }
 
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  background-color: #fff; /* 設置表格的背景顏色為白色 */
+  margin-left: 200px;
+}
 
+.report-table th, .report-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.report-table th {
+  background-color: #f4f4f4;
+}
+
+.chart-block {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 10px;
+  height: 600px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.chart-block p {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #000;
+}
+
+.chart-block canvas {
+  flex: 1;
+  margin: 0 auto;
+  height: 100%;
+}
+
+.buttons-container {
+  text-align: center;
+  margin-top: 20px;
+}
 </style>

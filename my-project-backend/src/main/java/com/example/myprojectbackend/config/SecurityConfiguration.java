@@ -72,9 +72,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/auth/**").permitAll()
                                         .requestMatchers("/api/picture/**").permitAll()
                                         .requestMatchers("/api/android/**").permitAll()
-                                //該api限定只能有身份為admin才能訪問
-                                .requestMatchers("/api/test/admin").hasRole("admin")
-                                .requestMatchers("/api/test/hello").hasRole("user")
+                                //測試用api 不需要權限認證
+                                .requestMatchers("/api/test/**").permitAll()
                                 //對於那些沒有被前面的規則匹配到的請求，都需要用戶進行認證才能訪問
                         .anyRequest().authenticated()
                         //允許表單登入

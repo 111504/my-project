@@ -112,7 +112,7 @@ const  initUserList=async()=>{
     tableData.value=response.userList;
     total.value=response.total;
      console.log("initUserList",response.userList);
-    // console.log("total.value",total.value);
+
   })
 }
 
